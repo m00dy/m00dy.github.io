@@ -1,0 +1,7 @@
+jekyll build
+cp -r _site/* ../erenyagdiran.github.io
+cd ../erenyagdiran.github.io
+git add --all
+DATE=`date +%Y-%m-%d`
+git commit -m "Automated Commit $DATE"
+git push
