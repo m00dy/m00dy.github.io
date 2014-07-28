@@ -1,6 +1,8 @@
 jekyll build
 cp -r _site/* ../erenyagdiran.github.io
 cd ../erenyagdiran.github.io
+git config --global user.name "Eren Yağdıran"
+git config --global user.email "erenyagdiran@gmail.com"
 git add --all
 DATE=`date +%Y-%m-%d`
 git commit -m "Automated Commit $DATE"
