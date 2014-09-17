@@ -3,7 +3,7 @@
    <title>m00dy's place</title>
    <link href="/atom.xml" rel="self"/>
    <link href=""/>
-   <updated>2014-09-17T15:55:16+00:00</updated>
+   <updated>2014-09-17T15:58:44+00:00</updated>
    <id></id>
    <author>
       <name>John Doe</name>
@@ -62,6 +62,24 @@ Linux-gate.so is something like you cant find in your filesystem.But ldd shows t
 &lt;p&gt;ld-linux.so is linux&amp;#39;s dynamic loader.&lt;/p&gt;
 
 &lt;p&gt;Anyway until here everything is fine.We need to run the program under the debugger and see what happens.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;root@lisa:~# gdb CrackTheDoor 
+GNU gdb &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;GDB&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 7.4.1-debian
+Copyright &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;C&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2012&lt;/span&gt; Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt; or later &amp;lt;http://gnu.org/licenses/gpl.html&amp;gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type &lt;span class=&quot;s2&quot;&gt;&amp;quot;show copying&amp;quot;&lt;/span&gt;
+and &lt;span class=&quot;s2&quot;&gt;&amp;quot;show warranty&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; details.
+This GDB was configured as &lt;span class=&quot;s2&quot;&gt;&amp;quot;x86_64-linux-gnu&amp;quot;&lt;/span&gt;.
+For bug reporting instructions, please see:
+&amp;lt;http://www.gnu.org/software/gdb/bugs/&amp;gt;...
+Reading symbols from /root/CrackTheDoor...&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;no debugging symbols found&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;...done.
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; r
+Starting program: /root/CrackTheDoor 
+
+Program received signal SIGSEGV, Segmentation fault.
+0x080484fb in __do_global_dtors_aux &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 </content>
    </entry>
    

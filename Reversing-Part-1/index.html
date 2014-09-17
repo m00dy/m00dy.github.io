@@ -69,6 +69,24 @@ Linux-gate.so is something like you cant find in your filesystem.But ldd shows t
 
 <p>Anyway until here everything is fine.We need to run the program under the debugger and see what happens.</p>
 
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">root@lisa:~# gdb CrackTheDoor 
+GNU gdb <span class="o">(</span>GDB<span class="o">)</span> 7.4.1-debian
+Copyright <span class="o">(</span>C<span class="o">)</span> <span class="m">2012</span> Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version <span class="m">3</span> or later &lt;http://gnu.org/licenses/gpl.html&gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type <span class="s2">&quot;show copying&quot;</span>
+and <span class="s2">&quot;show warranty&quot;</span> <span class="k">for</span> details.
+This GDB was configured as <span class="s2">&quot;x86_64-linux-gnu&quot;</span>.
+For bug reporting instructions, please see:
+&lt;http://www.gnu.org/software/gdb/bugs/&gt;...
+Reading symbols from /root/CrackTheDoor...<span class="o">(</span>no debugging symbols found<span class="o">)</span>...done.
+<span class="o">(</span>gdb<span class="o">)</span> r
+Starting program: /root/CrackTheDoor 
+
+Program received signal SIGSEGV, Segmentation fault.
+0x080484fb in __do_global_dtors_aux <span class="o">()</span>
+<span class="o">(</span>gdb<span class="o">)</span></code></pre></div>
+
 </article>
 
     <div id="disqus_thread"></div>
