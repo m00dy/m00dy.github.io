@@ -3,7 +3,7 @@
    <title>m00dy's place</title>
    <link href="/atom.xml" rel="self"/>
    <link href=""/>
-   <updated>2014-09-17T15:46:16+00:00</updated>
+   <updated>2014-09-17T15:47:04+00:00</updated>
    <id></id>
    <author>
       <name>John Doe</name>
@@ -53,10 +53,9 @@ root@lisa:~#&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 root@lisa:~#&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Oh! just standart stuff.I will explain a bit.
-Linux-gate.so is something like you cant find in your filesystem.But ldd shows that it&amp;#39;s a shared library right ? Yes, Have you heard about Virtual DSO (Virtual Dynamic Shared Object)
-I suggest you to read about &lt;a href=&quot;http://www.trilithium.com/johan/2005/08/linux-gate/&quot;&gt;linux-gate.so&lt;/a&gt;&lt;/p&gt;
+Linux-gate.so is something like you cant find in your filesystem.But ldd shows that it&amp;#39;s a shared library right ? Yes, Have you heard about Virtual DSO (Virtual Dynamic Shared Object)&lt;/p&gt;
 
-&lt;p&gt;Check out the &lt;a href=&quot;http://jekyllrb.com&quot;&gt;Jekyll docs&lt;/a&gt; for more info on how to get the most out of Jekyll. File all bugs/feature requests at &lt;a href=&quot;https://github.com/mojombo/jekyll&quot;&gt;Jekyll&amp;#39;s GitHub repo&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I suggest you to read about &lt;a href=&quot;http://www.trilithium.com/johan/2005/08/linux-gate/&quot;&gt;linux-gate.so&lt;/a&gt;&lt;/p&gt;
 </content>
    </entry>
    
