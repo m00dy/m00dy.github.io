@@ -3,7 +3,7 @@
    <title>m00dy's place</title>
    <link href="/atom.xml" rel="self"/>
    <link href=""/>
-   <updated>2014-09-17T17:23:31+00:00</updated>
+   <updated>2014-09-17T17:29:34+00:00</updated>
    <id></id>
    <author>
       <name>John Doe</name>
@@ -45,7 +45,7 @@ PASSWORD:&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;I typed something stupid keyword 3 times and it quited. :)&lt;/p&gt;
 
-&lt;p&gt;I have some more tools to analyze.Lets get more info about the file.&lt;/p&gt;
+&lt;p&gt;I have more tools to analyze.Lets get more info about the file.&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;root@lisa:~# file CrackTheDoor 
 CrackTheDoor: ELF 32-bit LSB executable, Intel 80386, version &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;SYSV&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, dynamically linked &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;uses shared libs&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; GNU/Linux 2.6.15, BuildID&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;sha1&lt;span class=&quot;o&quot;&gt;]=&lt;/span&gt;0x9927be2fe310bea01d412164103b9c8b2d7567ea, not stripped
@@ -70,7 +70,7 @@ Linux-gate.so is something like you cant find in your filesystem.But ldd shows t
 
 &lt;p&gt;ld-linux.so is linux&amp;#39;s dynamic loader.&lt;/p&gt;
 
-&lt;p&gt;Anyway until here everything is fine.We need to run the program under the debugger and see what happens.&lt;/p&gt;
+&lt;p&gt;Anyway till here everything is fine.We need to run the program under the debugger and see what happens.&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;root@lisa:~# gdb CrackTheDoor 
 GNU gdb &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;GDB&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 7.4.1-debian
@@ -142,11 +142,11 @@ Local &lt;span class=&quot;nb&quot;&gt;exec &lt;/span&gt;file:
    0x8047675:   add    0x80476eb,%edx
    0x804767b:   ret&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;It should be like.This syntax mode belongs to AT&amp;amp;T and you can switch to Intel mode.In my opinion , Intel Syntax is a bit better&lt;/p&gt;
+&lt;p&gt;It should be look like this.This syntax mode belongs to AT&amp;amp;T and you can switch to Intel mode.In my opinion , Intel Syntax is a bit better&lt;/p&gt;
 
 &lt;p&gt;0x8047654 in this address , we first put 0x55 to al register then xor it via 0x99 which produces 0xCC&lt;/p&gt;
 
-&lt;p&gt;0xCC is very important Because , It means halt in x86 architecture.When your debugger wants to stop your program , it swaps the bytes to 0xCC in where it wants to stop.&lt;/p&gt;
+&lt;p&gt;0xCC is very important Because , It means &amp;quot;halt&amp;quot; in x86 architecture.When your debugger wants to stop your program , it swaps the bytes to 0xCC in where it wants to stop.&lt;/p&gt;
 
 &lt;p&gt;0x8047666 , here we see repnz scas =&amp;gt; this will search the memory region bounded by es to edi for the value inside al ( 0xCC )&lt;/p&gt;
 
@@ -206,7 +206,7 @@ ptrace&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;PTRACE_TRACEME, 0, 0x1, 0&lt
 
 &lt;p&gt;We need to bypass this ptrace protection so that program shall never understand even it is running under a debugger.&lt;/p&gt;
 
-&lt;p&gt;Therefore , Our strategy will be changing result of syscall.&lt;/p&gt;
+&lt;p&gt;So , Our strategy will be changing result of the syscall.&lt;/p&gt;
 
 &lt;p&gt;Syscalls are gateways from userspace to kernelspace.We are sure that ptrace is also using some syscalls to do process controlling thing.&lt;/p&gt;
 

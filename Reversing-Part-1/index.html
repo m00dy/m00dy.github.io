@@ -51,7 +51,7 @@ PASSWORD:</code></pre></div>
 
 <p>I typed something stupid keyword 3 times and it quited. :)</p>
 
-<p>I have some more tools to analyze.Lets get more info about the file.</p>
+<p>I have more tools to analyze.Lets get more info about the file.</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">root@lisa:~# file CrackTheDoor 
 CrackTheDoor: ELF 32-bit LSB executable, Intel 80386, version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, dynamically linked <span class="o">(</span>uses shared libs<span class="o">)</span>, <span class="k">for</span> GNU/Linux 2.6.15, BuildID<span class="o">[</span>sha1<span class="o">]=</span>0x9927be2fe310bea01d412164103b9c8b2d7567ea, not stripped
@@ -76,7 +76,7 @@ Linux-gate.so is something like you cant find in your filesystem.But ldd shows t
 
 <p>ld-linux.so is linux&#39;s dynamic loader.</p>
 
-<p>Anyway until here everything is fine.We need to run the program under the debugger and see what happens.</p>
+<p>Anyway till here everything is fine.We need to run the program under the debugger and see what happens.</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">root@lisa:~# gdb CrackTheDoor 
 GNU gdb <span class="o">(</span>GDB<span class="o">)</span> 7.4.1-debian
@@ -148,11 +148,11 @@ Local <span class="nb">exec </span>file:
    0x8047675:   add    0x80476eb,%edx
    0x804767b:   ret</code></pre></div>
 
-<p>It should be like.This syntax mode belongs to AT&amp;T and you can switch to Intel mode.In my opinion , Intel Syntax is a bit better</p>
+<p>It should be look like this.This syntax mode belongs to AT&amp;T and you can switch to Intel mode.In my opinion , Intel Syntax is a bit better</p>
 
 <p>0x8047654 in this address , we first put 0x55 to al register then xor it via 0x99 which produces 0xCC</p>
 
-<p>0xCC is very important Because , It means halt in x86 architecture.When your debugger wants to stop your program , it swaps the bytes to 0xCC in where it wants to stop.</p>
+<p>0xCC is very important Because , It means &quot;halt&quot; in x86 architecture.When your debugger wants to stop your program , it swaps the bytes to 0xCC in where it wants to stop.</p>
 
 <p>0x8047666 , here we see repnz scas =&gt; this will search the memory region bounded by es to edi for the value inside al ( 0xCC )</p>
 
@@ -212,7 +212,7 @@ ptrace<span class="o">(</span>PTRACE_TRACEME, 0, 0x1, 0<span class="o">)</span> 
 
 <p>We need to bypass this ptrace protection so that program shall never understand even it is running under a debugger.</p>
 
-<p>Therefore , Our strategy will be changing result of syscall.</p>
+<p>So , Our strategy will be changing result of the syscall.</p>
 
 <p>Syscalls are gateways from userspace to kernelspace.We are sure that ptrace is also using some syscalls to do process controlling thing.</p>
 
