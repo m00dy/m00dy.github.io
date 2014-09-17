@@ -3,7 +3,7 @@
    <title>m00dy's place</title>
    <link href="/atom.xml" rel="self"/>
    <link href=""/>
-   <updated>2014-09-17T15:58:44+00:00</updated>
+   <updated>2014-09-17T16:34:57+00:00</updated>
    <id></id>
    <author>
       <name>John Doe</name>
@@ -80,6 +80,141 @@ Starting program: /root/CrackTheDoor
 Program received signal SIGSEGV, Segmentation fault.
 0x080484fb in __do_global_dtors_aux &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;So , the program crashed itself.It figured out that we run it in a debugger.Therefore , there should be some anti-debugging tricks embedded inside the program.Ok..&lt;/p&gt;
+
+&lt;p&gt;Lets relaod the program and get the starting point of the program.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;root@lisa:~# gdb CrackTheDoor 
+GNU gdb &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;GDB&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 7.4.1-debian
+Copyright &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;C&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2012&lt;/span&gt; Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt; or later &amp;lt;http://gnu.org/licenses/gpl.html&amp;gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type &lt;span class=&quot;s2&quot;&gt;&amp;quot;show copying&amp;quot;&lt;/span&gt;
+and &lt;span class=&quot;s2&quot;&gt;&amp;quot;show warranty&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; details.
+This GDB was configured as &lt;span class=&quot;s2&quot;&gt;&amp;quot;x86_64-linux-gnu&amp;quot;&lt;/span&gt;.
+For bug reporting instructions, please see:
+&amp;lt;http://www.gnu.org/software/gdb/bugs/&amp;gt;...
+Reading symbols from /root/CrackTheDoor...&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;no debugging symbols found&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;...done.
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; info file
+Symbols from &lt;span class=&quot;s2&quot;&gt;&amp;quot;/root/CrackTheDoor&amp;quot;&lt;/span&gt;.
+Local &lt;span class=&quot;nb&quot;&gt;exec &lt;/span&gt;file:
+    &lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;/root/CrackTheDoor&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;, file &lt;span class=&quot;nb&quot;&gt;type &lt;/span&gt;elf32-i386.
+    Entry point: 0x804762c
+...
+...&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now we got the Entry point for the program. Let&amp;#39;s put a breakpoint there and start to debug the program through its entry point&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;b * 0x804762c&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Then press type &amp;quot;r&amp;quot; to run the program.You should be stopped at the first line of entry point&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; x/30i &lt;span class=&quot;nv&quot;&gt;$pc&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;gt; 0x804762c: pusha  
+   0x804762d:   mov    &lt;span class=&quot;nv&quot;&gt;$0xaa&lt;/span&gt;,%dl
+   0x804762f:   mov    &lt;span class=&quot;nv&quot;&gt;$0x8048480&lt;/span&gt;,%edi
+   0x8047634:   mov    &lt;span class=&quot;nv&quot;&gt;$0x8048cbc&lt;/span&gt;,%ecx
+   0x8047639:   mov    %edi,0x80476f3
+   0x804763f:   mov    %ecx,0x80476f7
+   0x8047645:   sub    %edi,%ecx
+   0x8047647:   mov    &lt;span class=&quot;nv&quot;&gt;$0x804762f&lt;/span&gt;,%esi
+   0x804764c:   push   &lt;span class=&quot;nv&quot;&gt;$0x80476c1&lt;/span&gt;
+   0x8047651:   pusha  
+   0x8047652:   mov    &lt;span class=&quot;nv&quot;&gt;$0x55&lt;/span&gt;,%al
+   0x8047654:   xor    &lt;span class=&quot;nv&quot;&gt;$0x99&lt;/span&gt;,%al
+   0x8047656:   mov    &lt;span class=&quot;nv&quot;&gt;$0x8047656&lt;/span&gt;,%edi
+   0x804765b:   mov    &lt;span class=&quot;nv&quot;&gt;$0x80476e5&lt;/span&gt;,%ecx
+   0x8047660:   sub    &lt;span class=&quot;nv&quot;&gt;$0x8047656&lt;/span&gt;,%ecx
+   0x8047666:   repnz scas %es:&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;%edi&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;,%al
+   0x8047668:   je     0x804770a
+   0x804766e:   mov    %edi,0x80476eb
+   0x8047674:   popa   
+   0x8047675:   add    0x80476eb,%edx
+   0x804767b:   ret&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;It should be like.This syntax mode belongs to AT&amp;amp;T and you can switch to Intel mode.In my opinion , Intel Syntax is a bit better&lt;/p&gt;
+
+&lt;p&gt;0x8047654 in this address , we first put 0x55 to al register then xor it via 0x99 which produces 0xCC&lt;/p&gt;
+
+&lt;p&gt;0xCC is very important Because , It means halt in x86 architecture.When your debugger wants to stop your program , it swaps the bytes to 0xCC in where it wants to stop.&lt;/p&gt;
+
+&lt;p&gt;0x8047666 , here we see repnz scas =&amp;gt; this will search the memory region bounded by es to edi for the value inside al ( 0xCC )&lt;/p&gt;
+
+&lt;p&gt;So , those lines will basically scan the memory , if there is a 0xCC , it will crash your program and such ...&lt;/p&gt;
+
+&lt;p&gt;Ok , i dont want to spend too much time here.Let&amp;#39;s try strace.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;root@lisa:~# strace ./CrackTheDoor 
+execve&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;./CrackTheDoor&amp;quot;&lt;/span&gt;, &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;./CrackTheDoor&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;, &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;/* &lt;span class=&quot;m&quot;&gt;17&lt;/span&gt; vars */&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; Process &lt;span class=&quot;nv&quot;&gt;PID&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;31085&lt;/span&gt; runs in &lt;span class=&quot;m&quot;&gt;32&lt;/span&gt; bit mode. &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+brk&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;                                  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0x9972000
+access&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;/etc/ld.so.nohwcap&amp;quot;&lt;/span&gt;, F_OK&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; -1 ENOENT &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;No such file or directory&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+mmap2&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;NULL, 4096, PROT_READ&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt;PROT_WRITE, MAP_PRIVATE&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt;MAP_ANONYMOUS, -1, 0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0xfffffffff7715000
+access&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;/etc/ld.so.preload&amp;quot;&lt;/span&gt;, R_OK&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; -1 ENOENT &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;No such file or directory&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+open&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;/etc/ld.so.cache&amp;quot;&lt;/span&gt;, O_RDONLY&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 3
+fstat64&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;3, &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;st_mode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;S_IFREG&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt;0644, &lt;span class=&quot;nv&quot;&gt;st_size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;35597, ...&lt;span class=&quot;o&quot;&gt;})&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0
+mmap2&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;NULL, 35597, PROT_READ, MAP_PRIVATE, 3, 0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0xfffffffff770c000
+close&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;3&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;                                &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0
+access&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;/etc/ld.so.nohwcap&amp;quot;&lt;/span&gt;, F_OK&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; -1 ENOENT &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;No such file or directory&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+open&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;/lib32/libc.so.6&amp;quot;&lt;/span&gt;, O_RDONLY&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 3
+&lt;span class=&quot;nb&quot;&gt;read&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;3, &lt;span class=&quot;s2&quot;&gt;&amp;quot;\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0\300o\1\0004\0\0\0&amp;quot;&lt;/span&gt;..., 512&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 512
+fstat64&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;3, &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;st_mode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;S_IFREG&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt;0755, &lt;span class=&quot;nv&quot;&gt;st_size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1441884, ...&lt;span class=&quot;o&quot;&gt;})&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0
+mmap2&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;NULL, 4096, PROT_READ&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt;PROT_WRITE, MAP_PRIVATE&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt;MAP_ANONYMOUS, -1, 0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0xfffffffff770b000
+mmap2&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;NULL, 1456504, PROT_READ&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt;PROT_EXEC, MAP_PRIVATE&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt;MAP_DENYWRITE, 3, 0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0xfffffffff75a7000
+mprotect&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0xf7704000, 4096, PROT_NONE&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0
+mmap2&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0xf7705000, 12288, PROT_READ&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt;PROT_WRITE, MAP_PRIVATE&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt;MAP_FIXED&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt;MAP_DENYWRITE, 3, 0x15d&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0xfffffffff7705000
+mmap2&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0xf7708000, 10616, PROT_READ&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt;PROT_WRITE, MAP_PRIVATE&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt;MAP_FIXED&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt;MAP_ANONYMOUS, -1, 0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0xfffffffff7708000
+close&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;3&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;                                &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0
+mmap2&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;NULL, 4096, PROT_READ&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt;PROT_WRITE, MAP_PRIVATE&lt;span class=&quot;p&quot;&gt;|&lt;/span&gt;MAP_ANONYMOUS, -1, 0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0xfffffffff75a6000
+set_thread_area&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0xffe4d864&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;             &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0
+mprotect&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0xf7705000, 8192, PROT_READ&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0
+mprotect&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0x8049000, 4096, PROT_READ&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0
+mprotect&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0xf7733000, 4096, PROT_READ&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0
+munmap&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0xf770c000, 35597&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;               &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0
+ptrace&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;PTRACE_TRACEME, 0, 0x1, 0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; -1 EPERM &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Operation not permitted&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+ptrace&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;PTRACE_TRACEME, 0, 0x1, 0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; -1 EPERM &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Operation not permitted&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;If you look at the last lines , the program crashed itself again.That&amp;#39;s because ptrace syscall.&lt;/p&gt;
+
+&lt;p&gt;In linux , ptrace is an abbreviation for &amp;quot;Process Trace&amp;quot;.With ptrace , you can control another process , changing its internal state like debuggers.&lt;/p&gt;
+
+&lt;p&gt;Debuggers use ptrace a lot :) it&amp;#39;s their job.&lt;/p&gt;
+
+&lt;p&gt;If we imagine code , it should look like this.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;int main&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ptrace&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;PTRACE_TRACEME, 0, 1, 0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &amp;lt; 0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nb&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;DEBUGGING... Bye\n&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; 1&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;Hello\n&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; 0&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;By the way , you can only do once ptrace[PTRACE_TRACEMe] , so debugger ptraced the program before, there our call will return false so we figured out there is something out there controlling our program&lt;/p&gt;
+
+&lt;p&gt;We need to bypass this ptrace protection so that program shall never understand even it is running under a debugger.&lt;/p&gt;
+
+&lt;p&gt;Therefore , Our strategy will be changing result of syscall.&lt;/p&gt;
+
+&lt;p&gt;Syscalls are gateways from userspace to kernelspace.We are sure that ptrace is also using some syscalls to do process controlling thing.&lt;/p&gt;
+
+&lt;p&gt;We will detect when the program uses ptrace and we will set its result to 0 :) here it is&lt;/p&gt;
+
+&lt;p&gt;In my home folder , i create a new .gdbinit file.Therefore , everytime i run gdb , those configurations will be loaded automatically.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;~/.gdbinit
+&lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;disassembly-flavor intel &lt;span class=&quot;c&quot;&gt;# Intel syntax is better&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;disassemble-next-line on
+catch syscall ptrace &lt;span class=&quot;c&quot;&gt;#Catch the syscall.&lt;/span&gt;
+commands 1
+&lt;span class=&quot;nb&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$eax&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;#eax will hold the result of the syscall.And it&amp;#39;s ia always 0 or let me say TRUE&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;continue&lt;/span&gt;
+end&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;this way , we bypass the ptrace protection and now we need to switch back to gdb&lt;/p&gt;
 </content>
    </entry>
    

@@ -87,6 +87,141 @@ Program received signal SIGSEGV, Segmentation fault.
 0x080484fb in __do_global_dtors_aux <span class="o">()</span>
 <span class="o">(</span>gdb<span class="o">)</span></code></pre></div>
 
+<p>So , the program crashed itself.It figured out that we run it in a debugger.Therefore , there should be some anti-debugging tricks embedded inside the program.Ok..</p>
+
+<p>Lets relaod the program and get the starting point of the program.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">root@lisa:~# gdb CrackTheDoor 
+GNU gdb <span class="o">(</span>GDB<span class="o">)</span> 7.4.1-debian
+Copyright <span class="o">(</span>C<span class="o">)</span> <span class="m">2012</span> Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version <span class="m">3</span> or later &lt;http://gnu.org/licenses/gpl.html&gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type <span class="s2">&quot;show copying&quot;</span>
+and <span class="s2">&quot;show warranty&quot;</span> <span class="k">for</span> details.
+This GDB was configured as <span class="s2">&quot;x86_64-linux-gnu&quot;</span>.
+For bug reporting instructions, please see:
+&lt;http://www.gnu.org/software/gdb/bugs/&gt;...
+Reading symbols from /root/CrackTheDoor...<span class="o">(</span>no debugging symbols found<span class="o">)</span>...done.
+<span class="o">(</span>gdb<span class="o">)</span> info file
+Symbols from <span class="s2">&quot;/root/CrackTheDoor&quot;</span>.
+Local <span class="nb">exec </span>file:
+    <span class="sb">`</span>/root/CrackTheDoor<span class="err">&#39;</span>, file <span class="nb">type </span>elf32-i386.
+    Entry point: 0x804762c
+...
+...</code></pre></div>
+
+<p>Now we got the Entry point for the program. Let&#39;s put a breakpoint there and start to debug the program through its entry point</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">b * 0x804762c</code></pre></div>
+
+<p>Then press type &quot;r&quot; to run the program.You should be stopped at the first line of entry point</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">gdb<span class="o">)</span> x/30i <span class="nv">$pc</span>
+<span class="o">=</span>&gt; 0x804762c: pusha  
+   0x804762d:   mov    <span class="nv">$0xaa</span>,%dl
+   0x804762f:   mov    <span class="nv">$0x8048480</span>,%edi
+   0x8047634:   mov    <span class="nv">$0x8048cbc</span>,%ecx
+   0x8047639:   mov    %edi,0x80476f3
+   0x804763f:   mov    %ecx,0x80476f7
+   0x8047645:   sub    %edi,%ecx
+   0x8047647:   mov    <span class="nv">$0x804762f</span>,%esi
+   0x804764c:   push   <span class="nv">$0x80476c1</span>
+   0x8047651:   pusha  
+   0x8047652:   mov    <span class="nv">$0x55</span>,%al
+   0x8047654:   xor    <span class="nv">$0x99</span>,%al
+   0x8047656:   mov    <span class="nv">$0x8047656</span>,%edi
+   0x804765b:   mov    <span class="nv">$0x80476e5</span>,%ecx
+   0x8047660:   sub    <span class="nv">$0x8047656</span>,%ecx
+   0x8047666:   repnz scas %es:<span class="o">(</span>%edi<span class="o">)</span>,%al
+   0x8047668:   je     0x804770a
+   0x804766e:   mov    %edi,0x80476eb
+   0x8047674:   popa   
+   0x8047675:   add    0x80476eb,%edx
+   0x804767b:   ret</code></pre></div>
+
+<p>It should be like.This syntax mode belongs to AT&amp;T and you can switch to Intel mode.In my opinion , Intel Syntax is a bit better</p>
+
+<p>0x8047654 in this address , we first put 0x55 to al register then xor it via 0x99 which produces 0xCC</p>
+
+<p>0xCC is very important Because , It means halt in x86 architecture.When your debugger wants to stop your program , it swaps the bytes to 0xCC in where it wants to stop.</p>
+
+<p>0x8047666 , here we see repnz scas =&gt; this will search the memory region bounded by es to edi for the value inside al ( 0xCC )</p>
+
+<p>So , those lines will basically scan the memory , if there is a 0xCC , it will crash your program and such ...</p>
+
+<p>Ok , i dont want to spend too much time here.Let&#39;s try strace.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">root@lisa:~# strace ./CrackTheDoor 
+execve<span class="o">(</span><span class="s2">&quot;./CrackTheDoor&quot;</span>, <span class="o">[</span><span class="s2">&quot;./CrackTheDoor&quot;</span><span class="o">]</span>, <span class="o">[</span>/* <span class="m">17</span> vars */<span class="o">])</span> <span class="o">=</span> 0
+<span class="o">[</span> Process <span class="nv">PID</span><span class="o">=</span><span class="m">31085</span> runs in <span class="m">32</span> bit mode. <span class="o">]</span>
+brk<span class="o">(</span>0<span class="o">)</span>                                  <span class="o">=</span> 0x9972000
+access<span class="o">(</span><span class="s2">&quot;/etc/ld.so.nohwcap&quot;</span>, F_OK<span class="o">)</span>      <span class="o">=</span> -1 ENOENT <span class="o">(</span>No such file or directory<span class="o">)</span>
+mmap2<span class="o">(</span>NULL, 4096, PROT_READ<span class="p">|</span>PROT_WRITE, MAP_PRIVATE<span class="p">|</span>MAP_ANONYMOUS, -1, 0<span class="o">)</span> <span class="o">=</span> 0xfffffffff7715000
+access<span class="o">(</span><span class="s2">&quot;/etc/ld.so.preload&quot;</span>, R_OK<span class="o">)</span>      <span class="o">=</span> -1 ENOENT <span class="o">(</span>No such file or directory<span class="o">)</span>
+open<span class="o">(</span><span class="s2">&quot;/etc/ld.so.cache&quot;</span>, O_RDONLY<span class="o">)</span>      <span class="o">=</span> 3
+fstat64<span class="o">(</span>3, <span class="o">{</span><span class="nv">st_mode</span><span class="o">=</span>S_IFREG<span class="p">|</span>0644, <span class="nv">st_size</span><span class="o">=</span>35597, ...<span class="o">})</span> <span class="o">=</span> 0
+mmap2<span class="o">(</span>NULL, 35597, PROT_READ, MAP_PRIVATE, 3, 0<span class="o">)</span> <span class="o">=</span> 0xfffffffff770c000
+close<span class="o">(</span>3<span class="o">)</span>                                <span class="o">=</span> 0
+access<span class="o">(</span><span class="s2">&quot;/etc/ld.so.nohwcap&quot;</span>, F_OK<span class="o">)</span>      <span class="o">=</span> -1 ENOENT <span class="o">(</span>No such file or directory<span class="o">)</span>
+open<span class="o">(</span><span class="s2">&quot;/lib32/libc.so.6&quot;</span>, O_RDONLY<span class="o">)</span>      <span class="o">=</span> 3
+<span class="nb">read</span><span class="o">(</span>3, <span class="s2">&quot;\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0\300o\1\0004\0\0\0&quot;</span>..., 512<span class="o">)</span> <span class="o">=</span> 512
+fstat64<span class="o">(</span>3, <span class="o">{</span><span class="nv">st_mode</span><span class="o">=</span>S_IFREG<span class="p">|</span>0755, <span class="nv">st_size</span><span class="o">=</span>1441884, ...<span class="o">})</span> <span class="o">=</span> 0
+mmap2<span class="o">(</span>NULL, 4096, PROT_READ<span class="p">|</span>PROT_WRITE, MAP_PRIVATE<span class="p">|</span>MAP_ANONYMOUS, -1, 0<span class="o">)</span> <span class="o">=</span> 0xfffffffff770b000
+mmap2<span class="o">(</span>NULL, 1456504, PROT_READ<span class="p">|</span>PROT_EXEC, MAP_PRIVATE<span class="p">|</span>MAP_DENYWRITE, 3, 0<span class="o">)</span> <span class="o">=</span> 0xfffffffff75a7000
+mprotect<span class="o">(</span>0xf7704000, 4096, PROT_NONE<span class="o">)</span>   <span class="o">=</span> 0
+mmap2<span class="o">(</span>0xf7705000, 12288, PROT_READ<span class="p">|</span>PROT_WRITE, MAP_PRIVATE<span class="p">|</span>MAP_FIXED<span class="p">|</span>MAP_DENYWRITE, 3, 0x15d<span class="o">)</span> <span class="o">=</span> 0xfffffffff7705000
+mmap2<span class="o">(</span>0xf7708000, 10616, PROT_READ<span class="p">|</span>PROT_WRITE, MAP_PRIVATE<span class="p">|</span>MAP_FIXED<span class="p">|</span>MAP_ANONYMOUS, -1, 0<span class="o">)</span> <span class="o">=</span> 0xfffffffff7708000
+close<span class="o">(</span>3<span class="o">)</span>                                <span class="o">=</span> 0
+mmap2<span class="o">(</span>NULL, 4096, PROT_READ<span class="p">|</span>PROT_WRITE, MAP_PRIVATE<span class="p">|</span>MAP_ANONYMOUS, -1, 0<span class="o">)</span> <span class="o">=</span> 0xfffffffff75a6000
+set_thread_area<span class="o">(</span>0xffe4d864<span class="o">)</span>             <span class="o">=</span> 0
+mprotect<span class="o">(</span>0xf7705000, 8192, PROT_READ<span class="o">)</span>   <span class="o">=</span> 0
+mprotect<span class="o">(</span>0x8049000, 4096, PROT_READ<span class="o">)</span>    <span class="o">=</span> 0
+mprotect<span class="o">(</span>0xf7733000, 4096, PROT_READ<span class="o">)</span>   <span class="o">=</span> 0
+munmap<span class="o">(</span>0xf770c000, 35597<span class="o">)</span>               <span class="o">=</span> 0
+ptrace<span class="o">(</span>PTRACE_TRACEME, 0, 0x1, 0<span class="o">)</span>       <span class="o">=</span> -1 EPERM <span class="o">(</span>Operation not permitted<span class="o">)</span>
+ptrace<span class="o">(</span>PTRACE_TRACEME, 0, 0x1, 0<span class="o">)</span>       <span class="o">=</span> -1 EPERM <span class="o">(</span>Operation not permitted<span class="o">)</span></code></pre></div>
+
+<p>If you look at the last lines , the program crashed itself again.That&#39;s because ptrace syscall.</p>
+
+<p>In linux , ptrace is an abbreviation for &quot;Process Trace&quot;.With ptrace , you can control another process , changing its internal state like debuggers.</p>
+
+<p>Debuggers use ptrace a lot :) it&#39;s their job.</p>
+
+<p>If we imagine code , it should look like this.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">int main<span class="o">()</span>
+<span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span>ptrace<span class="o">(</span>PTRACE_TRACEME, 0, 1, 0<span class="o">)</span> &lt; 0<span class="o">)</span> <span class="o">{</span>
+        <span class="nb">printf</span><span class="o">(</span><span class="s2">&quot;DEBUGGING... Bye\n&quot;</span><span class="o">)</span><span class="p">;</span>
+        <span class="k">return</span> 1<span class="p">;</span>
+    <span class="o">}</span>
+    <span class="nb">printf</span><span class="o">(</span><span class="s2">&quot;Hello\n&quot;</span><span class="o">)</span><span class="p">;</span>
+    <span class="k">return</span> 0<span class="p">;</span>
+<span class="o">}</span></code></pre></div>
+
+<p>By the way , you can only do once ptrace[PTRACE_TRACEMe] , so debugger ptraced the program before, there our call will return false so we figured out there is something out there controlling our program</p>
+
+<p>We need to bypass this ptrace protection so that program shall never understand even it is running under a debugger.</p>
+
+<p>Therefore , Our strategy will be changing result of syscall.</p>
+
+<p>Syscalls are gateways from userspace to kernelspace.We are sure that ptrace is also using some syscalls to do process controlling thing.</p>
+
+<p>We will detect when the program uses ptrace and we will set its result to 0 :) here it is</p>
+
+<p>In my home folder , i create a new .gdbinit file.Therefore , everytime i run gdb , those configurations will be loaded automatically.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">~/.gdbinit
+<span class="nb">set </span>disassembly-flavor intel <span class="c"># Intel syntax is better</span>
+<span class="nb">set </span>disassemble-next-line on
+catch syscall ptrace <span class="c">#Catch the syscall.</span>
+commands 1
+<span class="nb">set</span> <span class="o">(</span><span class="nv">$eax</span><span class="o">)</span> <span class="o">=</span> <span class="m">0</span> <span class="c">#eax will hold the result of the syscall.And it&#39;s ia always 0 or let me say TRUE</span>
+<span class="k">continue</span>
+end</code></pre></div>
+
+<p>this way , we bypass the ptrace protection and now we need to switch back to gdb</p>
+
 </article>
 
     <div id="disqus_thread"></div>
