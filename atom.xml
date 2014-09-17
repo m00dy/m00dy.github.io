@@ -3,7 +3,7 @@
    <title>m00dy's place</title>
    <link href="/atom.xml" rel="self"/>
    <link href=""/>
-   <updated>2014-09-17T15:42:13+00:00</updated>
+   <updated>2014-09-17T15:46:16+00:00</updated>
    <id></id>
    <author>
       <name>John Doe</name>
@@ -42,8 +42,9 @@ PASSWORD:&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 CrackTheDoor: ELF 32-bit LSB executable, Intel 80386, version &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;SYSV&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, dynamically linked &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;uses shared libs&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; GNU/Linux 2.6.15, BuildID&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;sha1&lt;span class=&quot;o&quot;&gt;]=&lt;/span&gt;0x9927be2fe310bea01d412164103b9c8b2d7567ea, not stripped
 root@lisa:~#&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;Ok. Now we have a little bit more info about the binary :)
-Let&amp;#39;s do this.&lt;/p&gt;
+&lt;p&gt;Ok. Now we have a little bit more info about the binary :)&lt;/p&gt;
+
+&lt;p&gt;Let&amp;#39;s do this.&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;root@lisa:~# ldd CrackTheDoor 
     linux-gate.so.1 &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;gt;  &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0xf777b000&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
