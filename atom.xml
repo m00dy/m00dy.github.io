@@ -3,7 +3,7 @@
    <title>m00dy's place</title>
    <link href="/atom.xml" rel="self"/>
    <link href=""/>
-   <updated>2014-09-17T17:31:23+00:00</updated>
+   <updated>2014-09-17T17:34:56+00:00</updated>
    <id></id>
    <author>
       <name>John Doe</name>
@@ -12,13 +12,13 @@
 
    
    <entry>
-      <title>Reversing Part 1!</title>
-      <link href="/Reversing-Part-1"/>
+      <title>I was just asked to crack a program in a job interview !</title>
+      <link href="/I-was-just-asked-to-crack-a-program-Part-1"/>
       <updated>2014-09-17T17:00:41+00:00</updated>
-      <id>/Reversing-Part-1</id>
+      <id>/I-was-just-asked-to-crack-a-program-Part-1</id>
       <content type="html">&lt;p&gt;TL;DR&lt;/p&gt;
 
-&lt;p&gt;I just asked to crack a program for a job interview.
+&lt;p&gt;I was just asked to crack a program in a job interview.
 and got the job.&lt;/p&gt;
 
 &lt;p&gt;Hello everyone,&lt;/p&gt;
@@ -384,7 +384,7 @@ PASSWORD:&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Here , the program compares the my xored inputs with the constants again.&lt;/p&gt;
 
-&lt;p&gt;Now , we look at the inputs again , first inputs were xored with some constants and outputs compares with other constants&lt;/p&gt;
+&lt;p&gt;Now , we look at the inputs again , first inputs were xored with some constants and outputs compared with other constants&lt;/p&gt;
 
 &lt;p&gt;So last 2 functions should be like this.&lt;/p&gt;
 
