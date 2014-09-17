@@ -3,7 +3,7 @@
    <title>m00dy's place</title>
    <link href="/atom.xml" rel="self"/>
    <link href=""/>
-   <updated>2014-07-28T23:18:25+00:00</updated>
+   <updated>2014-09-17T14:51:52+00:00</updated>
    <id></id>
    <author>
       <name>John Doe</name>
@@ -13,9 +13,9 @@
    
    <entry>
       <title>Welcome to Jekyll!</title>
-      <link href="/welcome-to-jekyll"/>
+      <link href="/Reversing-Part-1"/>
       <updated>2014-03-19T17:40:41+00:00</updated>
-      <id>/welcome-to-jekyll</id>
+      <id>/Reversing-Part-1</id>
       <content type="html">&lt;p&gt;You&amp;#39;ll find this post in your &lt;code&gt;_posts&lt;/code&gt; directory - edit this post and re-build (or run with the &lt;code&gt;-w&lt;/code&gt; switch) to see your changes!
 To add new posts, simply add a file in the &lt;code&gt;_posts&lt;/code&gt; directory that follows the convention: YYYY-MM-DD-name-of-post.ext.&lt;/p&gt;
 
