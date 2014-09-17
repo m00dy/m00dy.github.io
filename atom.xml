@@ -3,7 +3,7 @@
    <title>m00dy's place</title>
    <link href="/atom.xml" rel="self"/>
    <link href=""/>
-   <updated>2014-09-17T17:29:43+00:00</updated>
+   <updated>2014-09-17T17:30:37+00:00</updated>
    <id></id>
    <author>
       <name>John Doe</name>
@@ -223,7 +223,7 @@ commands 1
 &lt;span class=&quot;k&quot;&gt;continue&lt;/span&gt;
 end&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;h1&gt;eax will hold the result of the syscall.And it&amp;#39;s ia always 0 or let me say TRUE&lt;/h1&gt;
+&lt;p&gt;eax will hold the result of the syscall.And it&amp;#39;s ia always 0 or let me say TRUE&lt;/p&gt;
 
 &lt;p&gt;this way , we bypass the ptrace protection and now we need to switch back to gdb&lt;/p&gt;
 
