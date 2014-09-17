@@ -216,11 +216,218 @@ ptrace<span class="o">(</span>PTRACE_TRACEME, 0, 0x1, 0<span class="o">)</span> 
 <span class="nb">set </span>disassemble-next-line on
 catch syscall ptrace <span class="c">#Catch the syscall.</span>
 commands 1
-<span class="nb">set</span> <span class="o">(</span><span class="nv">$eax</span><span class="o">)</span> <span class="o">=</span> <span class="m">0</span> <span class="c">#eax will hold the result of the syscall.And it&#39;s ia always 0 or let me say TRUE</span>
+<span class="nb">set</span> <span class="o">(</span><span class="nv">$eax</span><span class="o">)</span> <span class="o">=</span> 0
 <span class="k">continue</span>
 end</code></pre></div>
 
+<h1>eax will hold the result of the syscall.And it&#39;s ia always 0 or let me say TRUE</h1>
+
 <p>this way , we bypass the ptrace protection and now we need to switch back to gdb</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">eren@lisa:~<span class="nv">$ </span>gdb ./CrackTheDoor 
+GNU gdb <span class="o">(</span>GDB<span class="o">)</span> 7.4.1-debian
+Copyright <span class="o">(</span>C<span class="o">)</span> <span class="m">2012</span> Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version <span class="m">3</span> or later &lt;http://gnu.org/licenses/gpl.html&gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type <span class="s2">&quot;show copying&quot;</span>
+and <span class="s2">&quot;show warranty&quot;</span> <span class="k">for</span> details.
+This GDB was configured as <span class="s2">&quot;x86_64-linux-gnu&quot;</span>.
+For bug reporting instructions, please see:
+&lt;http://www.gnu.org/software/gdb/bugs/&gt;...
+Catchpoint <span class="m">1</span> <span class="o">(</span>syscall <span class="s1">&#39;ptrace&#39;</span> <span class="o">[</span>26<span class="o">])</span>
+Reading symbols from /home/eren/CrackTheDoor...<span class="o">(</span>no debugging symbols found<span class="o">)</span>...done.
+<span class="o">(</span>gdb<span class="o">)</span> r
+Starting program: /home/eren/CrackTheDoor 
+
+Catchpoint <span class="m">1</span> <span class="o">(</span>call to syscall ptrace<span class="o">)</span>, 0x08047698 in ?? <span class="o">()</span>
+<span class="o">=</span>&gt; 0x08047698:    3d <span class="m">00</span> f0 ff ff   cmp    eax,0xfffff000
+
+Catchpoint <span class="m">1</span> <span class="o">(</span>returned from syscall ptrace<span class="o">)</span>, 0x08047698 in ?? <span class="o">()</span>
+<span class="o">=</span>&gt; 0x08047698:    3d <span class="m">00</span> f0 ff ff   cmp    eax,0xfffff000
+
+        *** DOOR CONTROL SYSTEM  ***
+
+
+
+PASSWORD:</code></pre></div>
+
+<p>Ok , at least we can use our debugger as we want :)</p>
+
+<p>i put another breakpoint here PJeGPC4TIVaKFmmy53DJ</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">Breakpoint 2, 0x08048534 in PJeGPC4TIVaKFmmy53DJ <span class="o">()</span>
+<span class="o">=</span>&gt; 0x08048534 &lt;PJeGPC4TIVaKFmmy53DJ+0&gt;: 1e  push   ds
+<span class="o">(</span>gdb<span class="o">)</span> x/40i <span class="nv">$pc</span>
+<span class="o">=</span>&gt; 0x8048534 &lt;PJeGPC4TIVaKFmmy53DJ&gt;:    push   ds
+   0x8048535 &lt;PJeGPC4TIVaKFmmy53DJ+1&gt;:    mov    ebp,esp
+   0x8048537 &lt;PJeGPC4TIVaKFmmy53DJ+3&gt;:    sub    esp,0x20
+   0x804853a &lt;PJeGPC4TIVaKFmmy53DJ+6&gt;:    mov    BYTE PTR <span class="o">[</span>ebp-0x1<span class="o">]</span>,0xe4
+   0x804853e &lt;PJeGPC4TIVaKFmmy53DJ+10&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0x2<span class="o">]</span>,0x87
+   0x8048542 &lt;PJeGPC4TIVaKFmmy53DJ+14&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0x3<span class="o">]</span>,0xfb
+   0x8048546 &lt;PJeGPC4TIVaKFmmy53DJ+18&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0x4<span class="o">]</span>,0xbe
+   0x804854a &lt;PJeGPC4TIVaKFmmy53DJ+22&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0x5<span class="o">]</span>,0xc9
+   0x804854e &lt;PJeGPC4TIVaKFmmy53DJ+26&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0x6<span class="o">]</span>,0x93
+   0x8048552 &lt;PJeGPC4TIVaKFmmy53DJ+30&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0x7<span class="o">]</span>,0x84
+   0x8048556 &lt;PJeGPC4TIVaKFmmy53DJ+34&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0x8<span class="o">]</span>,0xfc
+   0x804855a &lt;PJeGPC4TIVaKFmmy53DJ+38&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0x9<span class="o">]</span>,0x8d
+   0x804855e &lt;PJeGPC4TIVaKFmmy53DJ+42&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0xa<span class="o">]</span>,0xe5
+   0x8048562 &lt;PJeGPC4TIVaKFmmy53DJ+46&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0xb<span class="o">]</span>,0xbf
+   0x8048566 &lt;PJeGPC4TIVaKFmmy53DJ+50&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0xc<span class="o">]</span>,0x5c
+   0x804856a &lt;PJeGPC4TIVaKFmmy53DJ+54&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0xd<span class="o">]</span>,0xe2
+   0x804856e &lt;PJeGPC4TIVaKFmmy53DJ+58&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0xe<span class="o">]</span>,0x76
+   0x8048572 &lt;PJeGPC4TIVaKFmmy53DJ+62&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0xf<span class="o">]</span>,0x21
+   0x8048576 &lt;PJeGPC4TIVaKFmmy53DJ+66&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0x10<span class="o">]</span>,0xb8
+   0x804857a &lt;PJeGPC4TIVaKFmmy53DJ+70&gt;:   mov    DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>,0x0
+   0x8048581 &lt;PJeGPC4TIVaKFmmy53DJ+77&gt;:   mov    eax,DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>
+   0x8048584 &lt;PJeGPC4TIVaKFmmy53DJ+80&gt;:   add    eax,DWORD PTR <span class="o">[</span>ebp+0x8<span class="o">]</span>
+   0x8048587 &lt;PJeGPC4TIVaKFmmy53DJ+83&gt;:   movzx  eax,BYTE PTR <span class="o">[</span>eax<span class="o">]</span>
+   0x804858a &lt;PJeGPC4TIVaKFmmy53DJ+86&gt;:   <span class="nb">test   </span>al,al
+   0x804858c &lt;PJeGPC4TIVaKFmmy53DJ+88&gt;:   je     0x8048808 &lt;PJeGPC4TIVaKFmmy53DJ+724&gt;
+   0x8048592 &lt;PJeGPC4TIVaKFmmy53DJ+94&gt;:   mov    eax,DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>
+   0x8048595 &lt;PJeGPC4TIVaKFmmy53DJ+97&gt;:   add    eax,DWORD PTR <span class="o">[</span>ebp+0x8<span class="o">]</span>
+   0x8048598 &lt;PJeGPC4TIVaKFmmy53DJ+100&gt;:  mov    edx,DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>
+   0x804859b &lt;PJeGPC4TIVaKFmmy53DJ+103&gt;:  add    edx,DWORD PTR <span class="o">[</span>ebp+0x8<span class="o">]</span>
+   0x804859e &lt;PJeGPC4TIVaKFmmy53DJ+106&gt;:  movzx  edx,BYTE PTR <span class="o">[</span>edx<span class="o">]</span>
+   0x80485a1 &lt;PJeGPC4TIVaKFmmy53DJ+109&gt;:  xor    dl,BYTE PTR <span class="o">[</span>ebp-0x1<span class="o">]</span>
+   0x80485a4 &lt;PJeGPC4TIVaKFmmy53DJ+112&gt;:  mov    BYTE PTR <span class="o">[</span>eax<span class="o">]</span>,dl
+   0x80485a6 &lt;PJeGPC4TIVaKFmmy53DJ+114&gt;:  add    DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>,0x1
+   0x80485aa &lt;PJeGPC4TIVaKFmmy53DJ+118&gt;:  mov    eax,DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>
+   0x80485ad &lt;PJeGPC4TIVaKFmmy53DJ+121&gt;:  add    eax,DWORD PTR <span class="o">[</span>ebp+0x8<span class="o">]</span>
+   0x80485b0 &lt;PJeGPC4TIVaKFmmy53DJ+124&gt;:  movzx  eax,BYTE PTR <span class="o">[</span>eax<span class="o">]</span>
+   0x80485b3 &lt;PJeGPC4TIVaKFmmy53DJ+127&gt;:  <span class="nb">test   </span>al,al
+   0x80485b5 &lt;PJeGPC4TIVaKFmmy53DJ+129&gt;:  je     0x804880b &lt;PJeGPC4TIVaKFmmy53DJ+727&gt;
+   0x80485bb &lt;PJeGPC4TIVaKFmmy53DJ+135&gt;:  mov    eax,DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>
+   0x80485be &lt;PJeGPC4TIVaKFmmy53DJ+138&gt;:  add    eax,DWORD PTR <span class="o">[</span>ebp+0x8<span class="o">]</span>
+   0x80485c1 &lt;PJeGPC4TIVaKFmmy53DJ+141&gt;:  mov    edx,DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>
+   0x80485c4 &lt;PJeGPC4TIVaKFmmy53DJ+144&gt;:  add    edx,DWORD PTR <span class="o">[</span>ebp+0x8<span class="o">]</span>
+   0x80485c7 &lt;PJeGPC4TIVaKFmmy53DJ+147&gt;:  movzx  edx,BYTE PTR <span class="o">[</span>edx<span class="o">]</span>
+   0x80485ca &lt;PJeGPC4TIVaKFmmy53DJ+150&gt;:  xor    dl,BYTE PTR <span class="o">[</span>ebp-0x2<span class="o">]</span></code></pre></div>
+
+<p>Now this part is interesting</p>
+
+<p>i see some constants moving somewhere and the inputs i gave to program xored with those constants </p>
+
+<p>i continued to investigate more..</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">(</span>gdb<span class="o">)</span> x/30i X1bdrhN8Yk9NZ59Vb7P2
+   0x8048838 &lt;X1bdrhN8Yk9NZ59Vb7P2&gt;:  sbb    ecx,DWORD PTR <span class="o">[</span>ecx+0x20ec83e5<span class="o">]</span>
+   0x804883e &lt;X1bdrhN8Yk9NZ59Vb7P2+6&gt;:    mov    DWORD PTR <span class="o">[</span>ebp-0x18<span class="o">]</span>,0x0
+   0x8048845 &lt;X1bdrhN8Yk9NZ59Vb7P2+13&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0x1<span class="o">]</span>,0xd9
+   0x8048849 &lt;X1bdrhN8Yk9NZ59Vb7P2+17&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0x2<span class="o">]</span>,0xcd
+   0x804884d &lt;X1bdrhN8Yk9NZ59Vb7P2+21&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0x3<span class="o">]</span>,0xc9
+   0x8048851 &lt;X1bdrhN8Yk9NZ59Vb7P2+25&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0x4<span class="o">]</span>,0xe5
+   0x8048855 &lt;X1bdrhN8Yk9NZ59Vb7P2+29&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0x5<span class="o">]</span>,0x9e
+   0x8048859 &lt;X1bdrhN8Yk9NZ59Vb7P2+33&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0x6<span class="o">]</span>,0xd0
+   0x804885d &lt;X1bdrhN8Yk9NZ59Vb7P2+37&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0x7<span class="o">]</span>,0xe8
+   0x8048861 &lt;X1bdrhN8Yk9NZ59Vb7P2+41&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0x8<span class="o">]</span>,0xa5
+   0x8048865 &lt;X1bdrhN8Yk9NZ59Vb7P2+45&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0x9<span class="o">]</span>,0xaf
+   0x8048869 &lt;X1bdrhN8Yk9NZ59Vb7P2+49&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0xa<span class="o">]</span>,0x87
+   0x804886d &lt;X1bdrhN8Yk9NZ59Vb7P2+53&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0xb<span class="o">]</span>,0xd2
+   0x8048871 &lt;X1bdrhN8Yk9NZ59Vb7P2+57&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0xc<span class="o">]</span>,0x79
+   0x8048875 &lt;X1bdrhN8Yk9NZ59Vb7P2+61&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0xd<span class="o">]</span>,0xa9
+   0x8048879 &lt;X1bdrhN8Yk9NZ59Vb7P2+65&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0xe<span class="o">]</span>,0x5d
+   0x804887d &lt;X1bdrhN8Yk9NZ59Vb7P2+69&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0xf<span class="o">]</span>,0x7
+   0x8048881 &lt;X1bdrhN8Yk9NZ59Vb7P2+73&gt;:   mov    BYTE PTR <span class="o">[</span>ebp-0x10<span class="o">]</span>,0x81
+   0x8048885 &lt;X1bdrhN8Yk9NZ59Vb7P2+77&gt;:   mov    DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>,0x0
+   0x804888c &lt;X1bdrhN8Yk9NZ59Vb7P2+84&gt;:   mov    eax,DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>
+   0x804888f &lt;X1bdrhN8Yk9NZ59Vb7P2+87&gt;:   add    eax,DWORD PTR <span class="o">[</span>ebp+0x8<span class="o">]</span>
+   0x8048892 &lt;X1bdrhN8Yk9NZ59Vb7P2+90&gt;:   movzx  eax,BYTE PTR <span class="o">[</span>eax<span class="o">]</span>
+   0x8048895 &lt;X1bdrhN8Yk9NZ59Vb7P2+93&gt;:   cmp    al,BYTE PTR <span class="o">[</span>ebp-0x1<span class="o">]</span>
+   0x8048898 &lt;X1bdrhN8Yk9NZ59Vb7P2+96&gt;:   je     0x80488a2 &lt;X1bdrhN8Yk9NZ59Vb7P2+106&gt;
+   0x804889a &lt;X1bdrhN8Yk9NZ59Vb7P2+98&gt;:   mov    eax,DWORD PTR <span class="o">[</span>ebp-0x18<span class="o">]</span></code></pre></div>
+
+<p>This is also similar :) Now we pushing another bunch of constants....</p>
+
+<p>Ok here&#39;s the remaining part of the function</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">0x804889d &lt;X1bdrhN8Yk9NZ59Vb7P2+101&gt;:    jmp    0x8048a20 &lt;X1bdrhN8Yk9NZ59Vb7P2+488&gt;
+   0x80488a2 &lt;X1bdrhN8Yk9NZ59Vb7P2+106&gt;:  add    DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>,0x1
+   0x80488a6 &lt;X1bdrhN8Yk9NZ59Vb7P2+110&gt;:  mov    eax,DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>
+   0x80488a9 &lt;X1bdrhN8Yk9NZ59Vb7P2+113&gt;:  add    eax,DWORD PTR <span class="o">[</span>ebp+0x8<span class="o">]</span>
+   0x80488ac &lt;X1bdrhN8Yk9NZ59Vb7P2+116&gt;:  movzx  eax,BYTE PTR <span class="o">[</span>eax<span class="o">]</span>
+   0x80488af &lt;X1bdrhN8Yk9NZ59Vb7P2+119&gt;:  cmp    al,BYTE PTR <span class="o">[</span>ebp-0x2<span class="o">]</span>
+   0x80488b2 &lt;X1bdrhN8Yk9NZ59Vb7P2+122&gt;:  je     0x80488bc &lt;X1bdrhN8Yk9NZ59Vb7P2+132&gt;
+   0x80488b4 &lt;X1bdrhN8Yk9NZ59Vb7P2+124&gt;:  mov    eax,DWORD PTR <span class="o">[</span>ebp-0x18<span class="o">]</span>
+   0x80488b7 &lt;X1bdrhN8Yk9NZ59Vb7P2+127&gt;:  jmp    0x8048a20 &lt;X1bdrhN8Yk9NZ59Vb7P2+488&gt;
+   0x80488bc &lt;X1bdrhN8Yk9NZ59Vb7P2+132&gt;:  add    DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>,0x1
+   0x80488c0 &lt;X1bdrhN8Yk9NZ59Vb7P2+136&gt;:  mov    eax,DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>
+   0x80488c3 &lt;X1bdrhN8Yk9NZ59Vb7P2+139&gt;:  add    eax,DWORD PTR <span class="o">[</span>ebp+0x8<span class="o">]</span>
+   0x80488c6 &lt;X1bdrhN8Yk9NZ59Vb7P2+142&gt;:  movzx  eax,BYTE PTR <span class="o">[</span>eax<span class="o">]</span>
+   0x80488c9 &lt;X1bdrhN8Yk9NZ59Vb7P2+145&gt;:  cmp    al,BYTE PTR <span class="o">[</span>ebp-0x3<span class="o">]</span>
+   0x80488cc &lt;X1bdrhN8Yk9NZ59Vb7P2+148&gt;:  je     0x80488d6 &lt;X1bdrhN8Yk9NZ59Vb7P2+158&gt;
+   0x80488ce &lt;X1bdrhN8Yk9NZ59Vb7P2+150&gt;:  mov    eax,DWORD PTR <span class="o">[</span>ebp-0x18<span class="o">]</span>
+   0x80488d1 &lt;X1bdrhN8Yk9NZ59Vb7P2+153&gt;:  jmp    0x8048a20 &lt;X1bdrhN8Yk9NZ59Vb7P2+488&gt;
+   0x80488d6 &lt;X1bdrhN8Yk9NZ59Vb7P2+158&gt;:  add    DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>,0x1
+   0x80488da &lt;X1bdrhN8Yk9NZ59Vb7P2+162&gt;:  mov    eax,DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>
+   0x80488dd &lt;X1bdrhN8Yk9NZ59Vb7P2+165&gt;:  add    eax,DWORD PTR <span class="o">[</span>ebp+0x8<span class="o">]</span>
+---Type &lt;<span class="k">return</span>&gt; to <span class="k">continue</span>, or q &lt;<span class="k">return</span>&gt; to quit---
+   0x80488e0 &lt;X1bdrhN8Yk9NZ59Vb7P2+168&gt;:  movzx  eax,BYTE PTR <span class="o">[</span>eax<span class="o">]</span>
+   0x80488e3 &lt;X1bdrhN8Yk9NZ59Vb7P2+171&gt;:  cmp    al,BYTE PTR <span class="o">[</span>ebp-0x4<span class="o">]</span>
+   0x80488e6 &lt;X1bdrhN8Yk9NZ59Vb7P2+174&gt;:  je     0x80488f0 &lt;X1bdrhN8Yk9NZ59Vb7P2+184&gt;
+   0x80488e8 &lt;X1bdrhN8Yk9NZ59Vb7P2+176&gt;:  mov    eax,DWORD PTR <span class="o">[</span>ebp-0x18<span class="o">]</span>
+   0x80488eb &lt;X1bdrhN8Yk9NZ59Vb7P2+179&gt;:  jmp    0x8048a20 &lt;X1bdrhN8Yk9NZ59Vb7P2+488&gt;
+   0x80488f0 &lt;X1bdrhN8Yk9NZ59Vb7P2+184&gt;:  add    DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>,0x1
+   0x80488f4 &lt;X1bdrhN8Yk9NZ59Vb7P2+188&gt;:  mov    eax,DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>
+   0x80488f7 &lt;X1bdrhN8Yk9NZ59Vb7P2+191&gt;:  add    eax,DWORD PTR <span class="o">[</span>ebp+0x8<span class="o">]</span>
+   0x80488fa &lt;X1bdrhN8Yk9NZ59Vb7P2+194&gt;:  movzx  eax,BYTE PTR <span class="o">[</span>eax<span class="o">]</span>
+   0x80488fd &lt;X1bdrhN8Yk9NZ59Vb7P2+197&gt;:  cmp    al,BYTE PTR <span class="o">[</span>ebp-0x5<span class="o">]</span>
+   0x8048900 &lt;X1bdrhN8Yk9NZ59Vb7P2+200&gt;:  je     0x804890a &lt;X1bdrhN8Yk9NZ59Vb7P2+210&gt;
+   0x8048902 &lt;X1bdrhN8Yk9NZ59Vb7P2+202&gt;:  mov    eax,DWORD PTR <span class="o">[</span>ebp-0x18<span class="o">]</span>
+   0x8048905 &lt;X1bdrhN8Yk9NZ59Vb7P2+205&gt;:  jmp    0x8048a20 &lt;X1bdrhN8Yk9NZ59Vb7P2+488&gt;
+   0x804890a &lt;X1bdrhN8Yk9NZ59Vb7P2+210&gt;:  add    DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>,0x1
+   0x804890e &lt;X1bdrhN8Yk9NZ59Vb7P2+214&gt;:  mov    eax,DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span></code></pre></div>
+
+<p>Do you see the pattern that i see here ? If you not , no problem..</p>
+
+<p>Here , the program compares the my xored inputs with the constants again.</p>
+
+<p>Now , we look at the inputs again , first inputs were xored with some constants and outputs compares with other constants</p>
+
+<p>So last 2 functions should be like this.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">void PJeGPC4TIVaKFmmy53DJ <span class="o">(</span>int * p<span class="o">)</span>
+<span class="o">{</span>
+  int array<span class="o">[]</span> <span class="o">=</span> <span class="o">{</span>0xe4,0x87,0xfb,0xbe,0xc9,0x93,0x84,0xfc,0x8d,0xe5,0xbf,0x5c,0xe2,0x76,0x21,0xb8<span class="o">}</span>
+  <span class="k">for</span><span class="o">(</span><span class="nv">i</span><span class="o">=</span>0<span class="p">;</span>i&lt;16<span class="p">;</span>i++<span class="o">)</span>
+ <span class="o">{</span>
+    p<span class="o">[</span>i<span class="o">]</span> <span class="o">=</span> p<span class="o">[</span>i<span class="o">]</span> ^ array<span class="o">[</span>i<span class="o">]</span>
+ <span class="o">}</span>
+<span class="o">}</span></code></pre></div>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">int X1bdrhN8Yk9NZ59Vb7P2<span class="o">(</span>int * p<span class="o">)</span>
+<span class="o">{</span>
+   int <span class="nv">array</span> <span class="o">=</span> <span class="o">{</span>0xd9,0xcd,0xc9,0xe5,0x9e,0xd0,0xe8,0xa5,0xaf,0x87,0xd2,0x79,0xa9,0x5d,0x7,0x81<span class="o">}</span>
+   <span class="k">for</span><span class="o">(</span><span class="nv">i</span><span class="o">=</span>0<span class="p">;</span>i&lt;16<span class="p">;</span>i++<span class="o">)</span>
+ <span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span>p<span class="o">[</span>i<span class="o">]</span> !<span class="o">=</span> array<span class="o">[</span>i<span class="o">])</span>
+         <span class="k">return</span> <span class="nb">false</span><span class="p">;</span> // fail..
+ <span class="o">}</span>
+  <span class="k">return</span> <span class="nb">true</span> 
+<span class="o">}</span></code></pre></div>
+
+<p>So write up a simple python script to xor those two constants to find the key </p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/usr/bin/python</span>
+<span class="nv">firstConst</span> <span class="o">=</span> <span class="o">[</span>0xe4,0x87,0xfb,0xbe,0xc9,0x93,0x84,0xfc,0x8d,0xe5,0xbf,0x5c,0xe2,0x76,0x21,0xb8<span class="o">]</span>
+<span class="nv">secondConst</span> <span class="o">=</span> <span class="o">[</span>0xd9,0xcd,0xc9,0xe5,0x9e,0xd0,0xe8,0xa5,0xaf,0x87,0xd2,0x79,0xa9,0x5d,0x7,0x81<span class="o">]</span>
+<span class="nv">ret</span> <span class="o">=</span><span class="s2">&quot;&quot;</span>
+<span class="k">for</span> x in range<span class="o">(</span>16<span class="o">)</span>:
+        ret+<span class="o">=</span>chr<span class="o">(</span>firstConst<span class="o">[</span>x<span class="o">]</span> ^ secondConst<span class="o">[</span>x<span class="o">])</span>
+print ret</code></pre></div>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">eren@lisa:~<span class="nv">$ </span>./CrackTheDoor 
+
+        *** DOOR CONTROL SYSTEM  ***
+
+
+
+PASSWORD: <span class="o">=</span>J2<span class="o">[</span>WClY<span class="err">&quot;</span>bm%K+<span class="p">&amp;</span>9
+
+        ***  ACCESS GRANTED  ***
+
+        ***  THE DOOR OPENED ***</code></pre></div>
+
+<p>And Woila! </p>
 
 </article>
 

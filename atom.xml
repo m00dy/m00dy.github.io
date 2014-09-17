@@ -3,7 +3,7 @@
    <title>m00dy's place</title>
    <link href="/atom.xml" rel="self"/>
    <link href=""/>
-   <updated>2014-09-17T16:34:57+00:00</updated>
+   <updated>2014-09-17T17:18:32+00:00</updated>
    <id></id>
    <author>
       <name>John Doe</name>
@@ -210,11 +210,218 @@ ptrace&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;PTRACE_TRACEME, 0, 0x1, 0&lt
 &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;disassemble-next-line on
 catch syscall ptrace &lt;span class=&quot;c&quot;&gt;#Catch the syscall.&lt;/span&gt;
 commands 1
-&lt;span class=&quot;nb&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$eax&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;#eax will hold the result of the syscall.And it&amp;#39;s ia always 0 or let me say TRUE&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$eax&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0
 &lt;span class=&quot;k&quot;&gt;continue&lt;/span&gt;
 end&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
+&lt;h1&gt;eax will hold the result of the syscall.And it&amp;#39;s ia always 0 or let me say TRUE&lt;/h1&gt;
+
 &lt;p&gt;this way , we bypass the ptrace protection and now we need to switch back to gdb&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;eren@lisa:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;gdb ./CrackTheDoor 
+GNU gdb &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;GDB&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 7.4.1-debian
+Copyright &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;C&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2012&lt;/span&gt; Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt; or later &amp;lt;http://gnu.org/licenses/gpl.html&amp;gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type &lt;span class=&quot;s2&quot;&gt;&amp;quot;show copying&amp;quot;&lt;/span&gt;
+and &lt;span class=&quot;s2&quot;&gt;&amp;quot;show warranty&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; details.
+This GDB was configured as &lt;span class=&quot;s2&quot;&gt;&amp;quot;x86_64-linux-gnu&amp;quot;&lt;/span&gt;.
+For bug reporting instructions, please see:
+&amp;lt;http://www.gnu.org/software/gdb/bugs/&amp;gt;...
+Catchpoint &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;syscall &lt;span class=&quot;s1&quot;&gt;&amp;#39;ptrace&amp;#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;26&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;
+Reading symbols from /home/eren/CrackTheDoor...&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;no debugging symbols found&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;...done.
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; r
+Starting program: /home/eren/CrackTheDoor 
+
+Catchpoint &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;call to syscall ptrace&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, 0x08047698 in ?? &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;gt; 0x08047698:    3d &lt;span class=&quot;m&quot;&gt;00&lt;/span&gt; f0 ff ff   cmp    eax,0xfffff000
+
+Catchpoint &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;returned from syscall ptrace&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, 0x08047698 in ?? &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;gt; 0x08047698:    3d &lt;span class=&quot;m&quot;&gt;00&lt;/span&gt; f0 ff ff   cmp    eax,0xfffff000
+
+        *** DOOR CONTROL SYSTEM  ***
+
+
+
+PASSWORD:&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Ok , at least we can use our debugger as we want :)&lt;/p&gt;
+
+&lt;p&gt;i put another breakpoint here PJeGPC4TIVaKFmmy53DJ&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;Breakpoint 2, 0x08048534 in PJeGPC4TIVaKFmmy53DJ &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;gt; 0x08048534 &amp;lt;PJeGPC4TIVaKFmmy53DJ+0&amp;gt;: 1e  push   ds
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; x/40i &lt;span class=&quot;nv&quot;&gt;$pc&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;gt; 0x8048534 &amp;lt;PJeGPC4TIVaKFmmy53DJ&amp;gt;:    push   ds
+   0x8048535 &amp;lt;PJeGPC4TIVaKFmmy53DJ+1&amp;gt;:    mov    ebp,esp
+   0x8048537 &amp;lt;PJeGPC4TIVaKFmmy53DJ+3&amp;gt;:    sub    esp,0x20
+   0x804853a &amp;lt;PJeGPC4TIVaKFmmy53DJ+6&amp;gt;:    mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x1&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0xe4
+   0x804853e &amp;lt;PJeGPC4TIVaKFmmy53DJ+10&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x2&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x87
+   0x8048542 &amp;lt;PJeGPC4TIVaKFmmy53DJ+14&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x3&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0xfb
+   0x8048546 &amp;lt;PJeGPC4TIVaKFmmy53DJ+18&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x4&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0xbe
+   0x804854a &amp;lt;PJeGPC4TIVaKFmmy53DJ+22&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x5&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0xc9
+   0x804854e &amp;lt;PJeGPC4TIVaKFmmy53DJ+26&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x6&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x93
+   0x8048552 &amp;lt;PJeGPC4TIVaKFmmy53DJ+30&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x7&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x84
+   0x8048556 &amp;lt;PJeGPC4TIVaKFmmy53DJ+34&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x8&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0xfc
+   0x804855a &amp;lt;PJeGPC4TIVaKFmmy53DJ+38&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x9&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x8d
+   0x804855e &amp;lt;PJeGPC4TIVaKFmmy53DJ+42&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0xa&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0xe5
+   0x8048562 &amp;lt;PJeGPC4TIVaKFmmy53DJ+46&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0xb&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0xbf
+   0x8048566 &amp;lt;PJeGPC4TIVaKFmmy53DJ+50&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0xc&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x5c
+   0x804856a &amp;lt;PJeGPC4TIVaKFmmy53DJ+54&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0xd&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0xe2
+   0x804856e &amp;lt;PJeGPC4TIVaKFmmy53DJ+58&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0xe&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x76
+   0x8048572 &amp;lt;PJeGPC4TIVaKFmmy53DJ+62&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0xf&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x21
+   0x8048576 &amp;lt;PJeGPC4TIVaKFmmy53DJ+66&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x10&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0xb8
+   0x804857a &amp;lt;PJeGPC4TIVaKFmmy53DJ+70&amp;gt;:   mov    DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x0
+   0x8048581 &amp;lt;PJeGPC4TIVaKFmmy53DJ+77&amp;gt;:   mov    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x8048584 &amp;lt;PJeGPC4TIVaKFmmy53DJ+80&amp;gt;:   add    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp+0x8&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x8048587 &amp;lt;PJeGPC4TIVaKFmmy53DJ+83&amp;gt;:   movzx  eax,BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;eax&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x804858a &amp;lt;PJeGPC4TIVaKFmmy53DJ+86&amp;gt;:   &lt;span class=&quot;nb&quot;&gt;test   &lt;/span&gt;al,al
+   0x804858c &amp;lt;PJeGPC4TIVaKFmmy53DJ+88&amp;gt;:   je     0x8048808 &amp;lt;PJeGPC4TIVaKFmmy53DJ+724&amp;gt;
+   0x8048592 &amp;lt;PJeGPC4TIVaKFmmy53DJ+94&amp;gt;:   mov    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x8048595 &amp;lt;PJeGPC4TIVaKFmmy53DJ+97&amp;gt;:   add    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp+0x8&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x8048598 &amp;lt;PJeGPC4TIVaKFmmy53DJ+100&amp;gt;:  mov    edx,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x804859b &amp;lt;PJeGPC4TIVaKFmmy53DJ+103&amp;gt;:  add    edx,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp+0x8&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x804859e &amp;lt;PJeGPC4TIVaKFmmy53DJ+106&amp;gt;:  movzx  edx,BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;edx&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80485a1 &amp;lt;PJeGPC4TIVaKFmmy53DJ+109&amp;gt;:  xor    dl,BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x1&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80485a4 &amp;lt;PJeGPC4TIVaKFmmy53DJ+112&amp;gt;:  mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;eax&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,dl
+   0x80485a6 &amp;lt;PJeGPC4TIVaKFmmy53DJ+114&amp;gt;:  add    DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x1
+   0x80485aa &amp;lt;PJeGPC4TIVaKFmmy53DJ+118&amp;gt;:  mov    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80485ad &amp;lt;PJeGPC4TIVaKFmmy53DJ+121&amp;gt;:  add    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp+0x8&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80485b0 &amp;lt;PJeGPC4TIVaKFmmy53DJ+124&amp;gt;:  movzx  eax,BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;eax&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80485b3 &amp;lt;PJeGPC4TIVaKFmmy53DJ+127&amp;gt;:  &lt;span class=&quot;nb&quot;&gt;test   &lt;/span&gt;al,al
+   0x80485b5 &amp;lt;PJeGPC4TIVaKFmmy53DJ+129&amp;gt;:  je     0x804880b &amp;lt;PJeGPC4TIVaKFmmy53DJ+727&amp;gt;
+   0x80485bb &amp;lt;PJeGPC4TIVaKFmmy53DJ+135&amp;gt;:  mov    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80485be &amp;lt;PJeGPC4TIVaKFmmy53DJ+138&amp;gt;:  add    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp+0x8&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80485c1 &amp;lt;PJeGPC4TIVaKFmmy53DJ+141&amp;gt;:  mov    edx,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80485c4 &amp;lt;PJeGPC4TIVaKFmmy53DJ+144&amp;gt;:  add    edx,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp+0x8&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80485c7 &amp;lt;PJeGPC4TIVaKFmmy53DJ+147&amp;gt;:  movzx  edx,BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;edx&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80485ca &amp;lt;PJeGPC4TIVaKFmmy53DJ+150&amp;gt;:  xor    dl,BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x2&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now this part is interesting&lt;/p&gt;
+
+&lt;p&gt;i see some constants moving somewhere and the inputs i gave to program xored with those constants &lt;/p&gt;
+
+&lt;p&gt;i continued to investigate more..&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; x/30i X1bdrhN8Yk9NZ59Vb7P2
+   0x8048838 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2&amp;gt;:  sbb    ecx,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ecx+0x20ec83e5&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x804883e &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+6&amp;gt;:    mov    DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x18&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x0
+   0x8048845 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+13&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x1&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0xd9
+   0x8048849 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+17&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x2&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0xcd
+   0x804884d &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+21&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x3&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0xc9
+   0x8048851 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+25&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x4&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0xe5
+   0x8048855 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+29&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x5&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x9e
+   0x8048859 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+33&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x6&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0xd0
+   0x804885d &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+37&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x7&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0xe8
+   0x8048861 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+41&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x8&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0xa5
+   0x8048865 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+45&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x9&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0xaf
+   0x8048869 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+49&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0xa&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x87
+   0x804886d &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+53&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0xb&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0xd2
+   0x8048871 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+57&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0xc&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x79
+   0x8048875 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+61&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0xd&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0xa9
+   0x8048879 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+65&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0xe&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x5d
+   0x804887d &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+69&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0xf&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x7
+   0x8048881 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+73&amp;gt;:   mov    BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x10&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x81
+   0x8048885 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+77&amp;gt;:   mov    DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x0
+   0x804888c &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+84&amp;gt;:   mov    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x804888f &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+87&amp;gt;:   add    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp+0x8&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x8048892 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+90&amp;gt;:   movzx  eax,BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;eax&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x8048895 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+93&amp;gt;:   cmp    al,BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x1&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x8048898 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+96&amp;gt;:   je     0x80488a2 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+106&amp;gt;
+   0x804889a &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+98&amp;gt;:   mov    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x18&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This is also similar :) Now we pushing another bunch of constants....&lt;/p&gt;
+
+&lt;p&gt;Ok here&amp;#39;s the remaining part of the function&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;0x804889d &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+101&amp;gt;:    jmp    0x8048a20 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+488&amp;gt;
+   0x80488a2 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+106&amp;gt;:  add    DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x1
+   0x80488a6 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+110&amp;gt;:  mov    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80488a9 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+113&amp;gt;:  add    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp+0x8&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80488ac &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+116&amp;gt;:  movzx  eax,BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;eax&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80488af &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+119&amp;gt;:  cmp    al,BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x2&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80488b2 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+122&amp;gt;:  je     0x80488bc &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+132&amp;gt;
+   0x80488b4 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+124&amp;gt;:  mov    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x18&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80488b7 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+127&amp;gt;:  jmp    0x8048a20 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+488&amp;gt;
+   0x80488bc &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+132&amp;gt;:  add    DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x1
+   0x80488c0 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+136&amp;gt;:  mov    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80488c3 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+139&amp;gt;:  add    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp+0x8&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80488c6 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+142&amp;gt;:  movzx  eax,BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;eax&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80488c9 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+145&amp;gt;:  cmp    al,BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x3&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80488cc &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+148&amp;gt;:  je     0x80488d6 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+158&amp;gt;
+   0x80488ce &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+150&amp;gt;:  mov    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x18&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80488d1 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+153&amp;gt;:  jmp    0x8048a20 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+488&amp;gt;
+   0x80488d6 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+158&amp;gt;:  add    DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x1
+   0x80488da &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+162&amp;gt;:  mov    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80488dd &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+165&amp;gt;:  add    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp+0x8&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+---Type &amp;lt;&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&amp;gt; to &lt;span class=&quot;k&quot;&gt;continue&lt;/span&gt;, or q &amp;lt;&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;&amp;gt; to quit---
+   0x80488e0 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+168&amp;gt;:  movzx  eax,BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;eax&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80488e3 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+171&amp;gt;:  cmp    al,BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x4&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80488e6 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+174&amp;gt;:  je     0x80488f0 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+184&amp;gt;
+   0x80488e8 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+176&amp;gt;:  mov    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x18&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80488eb &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+179&amp;gt;:  jmp    0x8048a20 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+488&amp;gt;
+   0x80488f0 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+184&amp;gt;:  add    DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x1
+   0x80488f4 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+188&amp;gt;:  mov    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80488f7 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+191&amp;gt;:  add    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp+0x8&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80488fa &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+194&amp;gt;:  movzx  eax,BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;eax&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x80488fd &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+197&amp;gt;:  cmp    al,BYTE PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x5&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x8048900 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+200&amp;gt;:  je     0x804890a &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+210&amp;gt;
+   0x8048902 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+202&amp;gt;:  mov    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x18&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x8048905 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+205&amp;gt;:  jmp    0x8048a20 &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+488&amp;gt;
+   0x804890a &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+210&amp;gt;:  add    DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x1
+   0x804890e &amp;lt;X1bdrhN8Yk9NZ59Vb7P2+214&amp;gt;:  mov    eax,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ebp-0x14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Do you see the pattern that i see here ? If you not , no problem..&lt;/p&gt;
+
+&lt;p&gt;Here , the program compares the my xored inputs with the constants again.&lt;/p&gt;
+
+&lt;p&gt;Now , we look at the inputs again , first inputs were xored with some constants and outputs compares with other constants&lt;/p&gt;
+
+&lt;p&gt;So last 2 functions should be like this.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;void PJeGPC4TIVaKFmmy53DJ &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;int * p&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  int array&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;0xe4,0x87,0xfb,0xbe,0xc9,0x93,0x84,0xfc,0x8d,0xe5,0xbf,0x5c,0xe2,0x76,0x21,0xb8&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;i&amp;lt;16&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;i++&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    p&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;i&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; p&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;i&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; ^ array&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;i&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;int X1bdrhN8Yk9NZ59Vb7P2&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;int * p&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+   int &lt;span class=&quot;nv&quot;&gt;array&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;0xd9,0xcd,0xc9,0xe5,0x9e,0xd0,0xe8,0xa5,0xaf,0x87,0xd2,0x79,0xa9,0x5d,0x7,0x81&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+   &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;i&amp;lt;16&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;i++&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;p&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;i&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; !&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; array&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;i&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;
+         &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; // fail..
+ &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt; 
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;So write up a simple python script to xor those two constants to find the key &lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/usr/bin/python&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;firstConst&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;0xe4,0x87,0xfb,0xbe,0xc9,0x93,0x84,0xfc,0x8d,0xe5,0xbf,0x5c,0xe2,0x76,0x21,0xb8&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;secondConst&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;0xd9,0xcd,0xc9,0xe5,0x9e,0xd0,0xe8,0xa5,0xaf,0x87,0xd2,0x79,0xa9,0x5d,0x7,0x81&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;ret&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; x in range&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;16&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;:
+        ret+&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;chr&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;firstConst&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;x&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; ^ secondConst&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;x&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;
+print ret&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;eren@lisa:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;./CrackTheDoor 
+
+        *** DOOR CONTROL SYSTEM  ***
+
+
+
+PASSWORD: &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;J2&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;WClY&lt;span class=&quot;err&quot;&gt;&amp;quot;&lt;/span&gt;bm%K+&lt;span class=&quot;p&quot;&gt;&amp;amp;&lt;/span&gt;9
+
+        ***  ACCESS GRANTED  ***
+
+        ***  THE DOOR OPENED ***&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;And Woila! &lt;/p&gt;
 </content>
    </entry>
    
