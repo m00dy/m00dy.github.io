@@ -3,7 +3,7 @@
    <title>m00dy's place</title>
    <link href="/atom.xml" rel="self"/>
    <link href=""/>
-   <updated>2014-09-17T15:47:04+00:00</updated>
+   <updated>2014-09-17T15:55:16+00:00</updated>
    <id></id>
    <author>
       <name>John Doe</name>
@@ -56,6 +56,12 @@ root@lisa:~#&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 Linux-gate.so is something like you cant find in your filesystem.But ldd shows that it&amp;#39;s a shared library right ? Yes, Have you heard about Virtual DSO (Virtual Dynamic Shared Object)&lt;/p&gt;
 
 &lt;p&gt;I suggest you to read about &lt;a href=&quot;http://www.trilithium.com/johan/2005/08/linux-gate/&quot;&gt;linux-gate.so&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;libc.so.6 is general c library for gnu system as you probably know.&lt;/p&gt;
+
+&lt;p&gt;ld-linux.so is linux&amp;#39;s dynamic loader.&lt;/p&gt;
+
+&lt;p&gt;Anyway until here everything is fine.We need to run the program under the debugger and see what happens.&lt;/p&gt;
 </content>
    </entry>
    
