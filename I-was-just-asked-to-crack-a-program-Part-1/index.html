@@ -167,7 +167,7 @@ Local <span class="nb">exec </span>file:
 
 <p>0x8047654 in this address , we first put 0x55 to al register then xor it via 0x99 which produces 0xCC</p>
 
-<p>0xCC is very important Because , It means &quot;halt&quot; in x86 architecture.When your debugger wants to stop your program , it swaps the bytes to 0xCC in where it wants to stop.</p>
+<p>0xCC is very important Because , It means it stops your process or like peter said in comments it is break-to-debugger in x86 architecture.When your debugger wants to stop your program , it swaps the bytes to 0xCC in where it wants to stop.</p>
 
 <p>0x8047666 , here we see repnz scas =&gt; this will search the memory region bounded by es to edi for the value inside al ( 0xCC )</p>
 

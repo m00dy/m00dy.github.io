@@ -3,7 +3,7 @@
    <title>m00dy's place</title>
    <link href="/atom.xml" rel="self"/>
    <link href=""/>
-   <updated>2014-09-18T11:12:18+00:00</updated>
+   <updated>2014-09-18T11:14:19+00:00</updated>
    <id></id>
    <author>
       <name>John Doe</name>
@@ -148,7 +148,7 @@ Local &lt;span class=&quot;nb&quot;&gt;exec &lt;/span&gt;file:
 
 &lt;p&gt;0x8047654 in this address , we first put 0x55 to al register then xor it via 0x99 which produces 0xCC&lt;/p&gt;
 
-&lt;p&gt;0xCC is very important Because , It means &amp;quot;halt&amp;quot; in x86 architecture.When your debugger wants to stop your program , it swaps the bytes to 0xCC in where it wants to stop.&lt;/p&gt;
+&lt;p&gt;0xCC is very important Because , It means it stops your process or like peter said in comments it is break-to-debugger in x86 architecture.When your debugger wants to stop your program , it swaps the bytes to 0xCC in where it wants to stop.&lt;/p&gt;
 
 &lt;p&gt;0x8047666 , here we see repnz scas =&amp;gt; this will search the memory region bounded by es to edi for the value inside al ( 0xCC )&lt;/p&gt;
 
