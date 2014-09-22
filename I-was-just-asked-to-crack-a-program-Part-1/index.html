@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
    <head>
@@ -41,19 +42,19 @@ and got the job.</p>
 
 <p>Hello everyone,</p>
 
-<p>I am quite excited about my new blog here. I am planning to write couple of blog posts every week.</p>
+<p>i am quite excited about my new blog here.I am planning to write couple of blog posts every week.</p>
 
-<p>Since the title gives you a brief information about a general concept, I would like to tell you my story about a job interview that was held in Ankara, TR.</p>
+<p>Since the title gives you a brief information about a general concept , i would like to tell you my story about a job interview that was held in Ankara,TR.</p>
 
-<p>I applied a &quot;Software Security Engineer&quot; position and in the interview, they asked me really low level stuff some of which I knew, some of which I did not.</p>
+<p>I applied a &quot;Software Security Engineer&quot; position  and In the interview , they asked me really low level stuff some of which i knew , some of which i didnot.</p>
 
-<p>Then they sent me an email which includes an attachment for a protected and encrypted binary (&quot;CRACK MEEE! &quot;).</p>
+<p>Then they send me an email which includes an attachment for a protected and encrypted binary.(&quot;CRACK MEEE! &quot;)</p>
 
-<p>When I got home, I downloaded it and it only asked me a password to unlock it. They wanted me to find that password :)</p>
+<p>When i got home , i downloaded it and it only asked me a password to unlock it.They wanted me to find that password :)</p>
 
-<p>At first, it looks pretty hard but I will try to introduce the general concept that I followed :)</p>
+<p>At first , it looks pretty hard but i will try to introduce the general concept that i had followed :)</p>
 
-<p>Here is the first thing I typed in the terminal</p>
+<p>Here is the first thing i typed in the terminal</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">root@lisa:~# ./CrackTheDoor 
 
@@ -65,7 +66,7 @@ PASSWORD:</code></pre></div>
 
 <p>I typed something stupid keyword 3 times and it quited. :)</p>
 
-<p>I have more tools to analyze. Lets get more info about the file.</p>
+<p>I have more tools to analyze.Lets get more info about the file.</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">root@lisa:~# file CrackTheDoor 
 CrackTheDoor: ELF 32-bit LSB executable, Intel 80386, version <span class="m">1</span> <span class="o">(</span>SYSV<span class="o">)</span>, dynamically linked <span class="o">(</span>uses shared libs<span class="o">)</span>, <span class="k">for</span> GNU/Linux 2.6.15, BuildID<span class="o">[</span>sha1<span class="o">]=</span>0x9927be2fe310bea01d412164103b9c8b2d7567ea, not stripped
@@ -81,16 +82,16 @@ root@lisa:~#</code></pre></div>
     /lib/ld-linux.so.2 <span class="o">(</span>0xf777c000<span class="o">)</span>
 root@lisa:~#</code></pre></div>
 
-<p>Oh! just standard stuff. I will explain a bit.
-linux-gate.so is something like you cant find in your filesystem. But ldd shows that it&#39;s a shared library right ? Yes, Have you heard about Virtual DSO (Virtual Dynamic Shared Object)</p>
+<p>Oh! just standart stuff.I will explain a bit.
+Linux-gate.so is something like you cant find in your filesystem.But ldd shows that it&#39;s a shared library right ? Yes, Have you heard about Virtual DSO (Virtual Dynamic Shared Object)</p>
 
 <p>I suggest you to read about <a href="http://www.trilithium.com/johan/2005/08/linux-gate/">linux-gate.so</a></p>
 
-<p>libc.so.6 is general C library for the GNU system as you probably know.</p>
+<p>libc.so.6 is general c library for gnu system as you probably know.</p>
 
 <p>ld-linux.so is linux&#39;s dynamic loader.</p>
 
-<p>Anyway till here everything is fine. We need to run the program under the debugger and see what happens.</p>
+<p>Anyway till here everything is fine.We need to run the program under the debugger and see what happens.</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">root@lisa:~# gdb CrackTheDoor 
 GNU gdb <span class="o">(</span>GDB<span class="o">)</span> 7.4.1-debian
@@ -110,9 +111,9 @@ Program received signal SIGSEGV, Segmentation fault.
 0x080484fb in __do_global_dtors_aux <span class="o">()</span>
 <span class="o">(</span>gdb<span class="o">)</span></code></pre></div>
 
-<p>So, the program crashed itself. It figured out that we run it in a debugger. Therefore, there should be some anti-debugging tricks embedded inside the program. Ok...</p>
+<p>So , the program crashed itself.It figured out that we run it in a debugger.Therefore , there should be some anti-debugging tricks embedded inside the program.Ok..</p>
 
-<p>Lets reload the program and get the starting point of the program.</p>
+<p>Lets relaod the program and get the starting point of the program.</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">root@lisa:~# gdb CrackTheDoor 
 GNU gdb <span class="o">(</span>GDB<span class="o">)</span> 7.4.1-debian
@@ -133,11 +134,11 @@ Local <span class="nb">exec </span>file:
 ...
 ...</code></pre></div>
 
-<p>Now we got the Entry point for the program. Let&#39;s put a breakpoint there and start to debug the program through its entry point.</p>
+<p>Now we got the Entry point for the program. Let&#39;s put a breakpoint there and start to debug the program through its entry point</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">b * 0x804762c</code></pre></div>
 
-<p>Then press type &quot;r&quot; to run the program. You should be stopped at the first line of entry point</p>
+<p>Then press type &quot;r&quot; to run the program.You should be stopped at the first line of entry point</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">gdb<span class="o">)</span> x/30i <span class="nv">$pc</span>
 <span class="o">=</span>&gt; 0x804762c: pusha  
@@ -162,17 +163,17 @@ Local <span class="nb">exec </span>file:
    0x8047675:   add    0x80476eb,%edx
    0x804767b:   ret</code></pre></div>
 
-<p>It should be look like this. This syntax mode belongs to AT&amp;T and you can switch to Intel mode. In my opinion, Intel Syntax is a bit better.</p>
+<p>It should be look like this.This syntax mode belongs to AT&amp;T and you can switch to Intel mode.In my opinion , Intel Syntax is a bit better</p>
 
-<p>0x8047654 in this address, we first put 0x55 to al register then xor it via 0x99 which produces 0xCC.</p>
+<p>0x8047654 in this address , we first put 0x55 to al register then xor it via 0x99 which produces 0xCC</p>
 
-<p>0xCC is very important because it means it stops your process or like peter said in comments it is break-to-debugger in x86 architecture. When your debugger wants to stop your program, it swaps the bytes to 0xCC in where it wants to stop.</p>
+<p>0xCC is very important Because , It means it stops your process or like peter said in comments it is break-to-debugger in x86 architecture.When your debugger wants to stop your program , it swaps the bytes to 0xCC in where it wants to stop.</p>
 
-<p>0x8047666, here we see repnz scas =&gt; this will search the memory region bounded by es to edi for the value inside al (0xCC).</p>
+<p>0x8047666 , here we see repnz scas =&gt; this will search the memory region bounded by es to edi for the value inside al ( 0xCC )</p>
 
-<p>So, those lines will basically scan the memory, if there is a 0xCC, it will crash your program and such...</p>
+<p>So , those lines will basically scan the memory , if there is a 0xCC , it will crash your program and such ...</p>
 
-<p>Ok, I don't want to spend too much time here. Let&#39;s try strace.</p>
+<p>Ok , i dont want to spend too much time here.Let&#39;s try strace.</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">root@lisa:~# strace ./CrackTheDoor 
 execve<span class="o">(</span><span class="s2">&quot;./CrackTheDoor&quot;</span>, <span class="o">[</span><span class="s2">&quot;./CrackTheDoor&quot;</span><span class="o">]</span>, <span class="o">[</span>/* <span class="m">17</span> vars */<span class="o">])</span> <span class="o">=</span> 0
@@ -204,13 +205,13 @@ munmap<span class="o">(</span>0xf770c000, 35597<span class="o">)</span>         
 ptrace<span class="o">(</span>PTRACE_TRACEME, 0, 0x1, 0<span class="o">)</span>       <span class="o">=</span> -1 EPERM <span class="o">(</span>Operation not permitted<span class="o">)</span>
 ptrace<span class="o">(</span>PTRACE_TRACEME, 0, 0x1, 0<span class="o">)</span>       <span class="o">=</span> -1 EPERM <span class="o">(</span>Operation not permitted<span class="o">)</span></code></pre></div>
 
-<p>If you look at the last lines, the program crashed itself again. That&#39;s because of the ptrace syscall.</p>
+<p>If you look at the last lines , the program crashed itself again.That&#39;s because ptrace syscall.</p>
 
-<p>In Linux, ptrace is an abbreviation for &quot;Process Trace&quot;. With ptrace, you can control another process, changing its internal state like debuggers.</p>
+<p>In linux , ptrace is an abbreviation for &quot;Process Trace&quot;.With ptrace , you can control another process , changing its internal state like debuggers.</p>
 
 <p>Debuggers use ptrace a lot :) it&#39;s their job.</p>
 
-<p>If we imagine code, it should look like this.</p>
+<p>If we imagine code , it should look like this.</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">int main<span class="o">()</span>
 <span class="o">{</span>
@@ -222,17 +223,17 @@ ptrace<span class="o">(</span>PTRACE_TRACEME, 0, 0x1, 0<span class="o">)</span> 
     <span class="k">return</span> 0<span class="p">;</span>
 <span class="o">}</span></code></pre></div>
 
-<p>By the way, you can only do once ptrace[PTRACE_TRACEMe], so debugger ptraced the program before, there our call will return false so we figured out there is something out there controlling our program.</p>
+<p>By the way , you can only do once ptrace[PTRACE_TRACEMe] , so debugger ptraced the program before, there our call will return false so we figured out there is something out there controlling our program</p>
 
 <p>We need to bypass this ptrace protection so that program shall never understand even it is running under a debugger.</p>
 
-<p>So, our strategy will be to change the result of the syscall.</p>
+<p>So , Our strategy will be changing result of the syscall.</p>
 
-<p>Syscalls are gateways from user space to kernel space. We are sure that ptrace is also using some syscalls to do process controlling thing.</p>
+<p>Syscalls are gateways from userspace to kernelspace.We are sure that ptrace is also using some syscalls to do process controlling thing.</p>
 
 <p>We will detect when the program uses ptrace and we will set its result to 0 :) here it is</p>
 
-<p>In my home folder, I create a new .gdbinit file. Therefore, every time I run gdb, those configurations will be loaded automatically.</p>
+<p>In my home folder , i create a new .gdbinit file.Therefore , everytime i run gdb , those configurations will be loaded automatically.</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">~/.gdbinit
 <span class="nb">set </span>disassembly-flavor intel <span class="c"># Intel syntax is better</span>
@@ -243,9 +244,9 @@ commands 1
 <span class="k">continue</span>
 end</code></pre></div>
 
-<p>eax will hold the result of the syscall. And it&#39;s ia always 0 or let me say TRUE.</p>
+<p>eax will hold the result of the syscall.And it&#39;s ia always 0 or let me say TRUE</p>
 
-<p>This way, we bypass the ptrace protection and now we need to switch back to gdb.</p>
+<p>this way , we bypass the ptrace protection and now we need to switch back to gdb</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">eren@lisa:~<span class="nv">$ </span>gdb ./CrackTheDoor 
 GNU gdb <span class="o">(</span>GDB<span class="o">)</span> 7.4.1-debian
@@ -274,9 +275,9 @@ Catchpoint <span class="m">1</span> <span class="o">(</span>returned from syscal
 
 PASSWORD:</code></pre></div>
 
-<p>Ok, at least we can use our debugger as we want :)</p>
+<p>Ok , at least we can use our debugger as we want :)</p>
 
-<p>I put another breakpoint here PJeGPC4TIVaKFmmy53DJ</p>
+<p>i put another breakpoint here PJeGPC4TIVaKFmmy53DJ</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">Breakpoint 2, 0x08048534 in PJeGPC4TIVaKFmmy53DJ <span class="o">()</span>
 <span class="o">=</span>&gt; 0x08048534 &lt;PJeGPC4TIVaKFmmy53DJ+0&gt;: 1e  push   ds
@@ -328,9 +329,9 @@ PASSWORD:</code></pre></div>
 
 <p>Now this part is interesting</p>
 
-<p>I see some constants moving somewhere and the inputs I gave to program xored with those constants.</p>
+<p>i see some constants moving somewhere and the inputs i gave to program xored with those constants </p>
 
-<p>I continued to investigate more...</p>
+<p>i continued to investigate more..</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">(</span>gdb<span class="o">)</span> x/30i X1bdrhN8Yk9NZ59Vb7P2
    0x8048838 &lt;X1bdrhN8Yk9NZ59Vb7P2&gt;:  sbb    ecx,DWORD PTR <span class="o">[</span>ecx+0x20ec83e5<span class="o">]</span>
@@ -359,9 +360,9 @@ PASSWORD:</code></pre></div>
    0x8048898 &lt;X1bdrhN8Yk9NZ59Vb7P2+96&gt;:   je     0x80488a2 &lt;X1bdrhN8Yk9NZ59Vb7P2+106&gt;
    0x804889a &lt;X1bdrhN8Yk9NZ59Vb7P2+98&gt;:   mov    eax,DWORD PTR <span class="o">[</span>ebp-0x18<span class="o">]</span></code></pre></div>
 
-<p>This is also similar :) Now we pushing another bunch of constants...</p>
+<p>This is also similar :) Now we pushing another bunch of constants....</p>
 
-<p>Ok here&#39;s the remaining part of the function:</p>
+<p>Ok here&#39;s the remaining part of the function</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">0x804889d &lt;X1bdrhN8Yk9NZ59Vb7P2+101&gt;:    jmp    0x8048a20 &lt;X1bdrhN8Yk9NZ59Vb7P2+488&gt;
    0x80488a2 &lt;X1bdrhN8Yk9NZ59Vb7P2+106&gt;:  add    DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>,0x1
@@ -400,13 +401,13 @@ PASSWORD:</code></pre></div>
    0x804890a &lt;X1bdrhN8Yk9NZ59Vb7P2+210&gt;:  add    DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span>,0x1
    0x804890e &lt;X1bdrhN8Yk9NZ59Vb7P2+214&gt;:  mov    eax,DWORD PTR <span class="o">[</span>ebp-0x14<span class="o">]</span></code></pre></div>
 
-<p>Do you see the pattern that I see here ? If you don't, no problem...</p>
+<p>Do you see the pattern that i see here ? If you dont, no problem..</p>
 
-<p>Here, the program compares the my xored inputs with the constants again.</p>
+<p>Here , the program compares the my xored inputs with the constants again.</p>
 
-<p>Now, we look at the inputs again, first inputs were xored with some constants and outputs compared with other constants</p>
+<p>Now , we look at the inputs again , first inputs were xored with some constants and outputs compared with other constants</p>
 
-<p>So the last 2 functions should be like this:</p>
+<p>So last 2 functions should be like this.</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">void PJeGPC4TIVaKFmmy53DJ <span class="o">(</span>int * p<span class="o">)</span>
 <span class="o">{</span>
@@ -428,7 +429,7 @@ PASSWORD:</code></pre></div>
   <span class="k">return</span> <span class="nb">true</span> 
 <span class="o">}</span></code></pre></div>
 
-<p>So write up a simple python script to xor those two constants to find the key:</p>
+<p>So write up a simple python script to xor those two constants to find the key </p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/usr/bin/python</span>
 <span class="nv">firstConst</span> <span class="o">=</span> <span class="o">[</span>0xe4,0x87,0xfb,0xbe,0xc9,0x93,0x84,0xfc,0x8d,0xe5,0xbf,0x5c,0xe2,0x76,0x21,0xb8<span class="o">]</span>
@@ -454,13 +455,13 @@ PASSWORD: <span class="o">=</span>J2<span class="o">[</span>WClY<span class="err
 
 <p>I&#39;ll write another to post to cover Part 2 :)</p>
 
-<p>The company sent me another crack me for round 2 :) That&#39;s also interesting...</p>
+<p>The company send me another crack me for round 2 :) That&#39;s also interesting..</p>
 
-<p>(BTW I got the job :) ).</p>
+<p>(BTW i got the job :) ).</p>
 
-<p>If you want to try it yourself, send me an email for binary.</p>
+<p>If you want to try it yourself , send me an email for binary.</p>
 
-<p>(You can also poke me for typos.)</p>
+<p>(You can also poke me for typos )</p>
 
 </article>
 
