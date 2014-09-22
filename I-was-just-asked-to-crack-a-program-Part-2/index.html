@@ -1,0 +1,522 @@
+
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta name="description" content="Personal blog of Eren, about computers, math and music">
+      <meta name="author" content="Eren">
+      <meta name="viewport" content="width=device-width">
+      <link rel="stylesheet" href="/css/syntax.css">
+      <link rel="stylesheet" href="/css/main.css">
+      <link rel="stylesheet" href="/css/normalize.css">
+      <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+      <link rel="icon" href="/favicon.ico" type="image/x-icon">
+      <link rel="alternate" type="application/atom+xml" href="/atom.xml">
+      <title>[Part2] I was asked to crack a program in a job interview !</title>
+   </head>
+
+   <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-54909516-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+   
+   <body>
+      <main>
+         <header>
+            <h1 class="title"><a href="/">m00dy's place</a></h1>
+         </header>
+
+         <article>
+   <h2>[Part2] I was asked to crack a program in a job interview !</h2>
+   <p>Hello guys , 
+(If you don&#39;t know what part2 means , please go back and read part 1.)
+First of all , i want to thank you all the people who read the <a href="http://erenyagdiran.github.io/I-was-just-asked-to-crack-a-program-Part-1/">part1</a>.I got really good feedbacks after all.</p>
+
+<p>But I&#39;m sorry , i would like to correct some misunderstandings.</p>
+
+<p>*My English is not that bad </p>
+
+<p>*I wasn&#39;t expecting too much traffic from HN , Reddit and others.</p>
+
+<p>*I&#39;m not working for that company now , I moved to Barcelona.</p>
+
+<p>*I passed the interviews almost 1 year ago.</p>
+
+<p>*I cracked the programs on the cloud.($5 plan , yes you know the company.)</p>
+
+<p>So , I don&#39;t really think that root@ is problem.I can redeploy another droplet in seconds.</p>
+
+<p>I switched to eren@ user that&#39;s because gdb didn&#39;t accept root&#39;s init file.</p>
+
+<p>*And finally , please read the end of the post.I&#39;m sure you will like it.</p>
+
+<p>Now , this time it&#39;s not about doors , we are going to crack the nuke.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">eren@lisa:~<span class="nv">$ </span>./CrackTheNuke 
+
+        *** NUKE CONTROL SYSTEM  ***
+
+
+
+PASSWORD: giveMeNuke
+
+        *** ACCESS DENIED ***
+
+
+PASSWORD: iwantanexplosion
+
+        *** ACCESS DENIED ***
+
+
+PASSWORD: knockknockitsme 
+
+        *** ACCESS DENIED ***
+
+        *** SYSTEM LOCKED ***
+
+        *** SHUTTING DOWN ***
+
+eren@lisa:~<span class="err">$</span></code></pre></div>
+
+<p>I&#39;ll dump whole binary into intel asm syntax as reference.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">eren@lisa:~<span class="nv">$ </span>objdump -M intel -D CrackTheNuke &gt; staticDis 
+eren@lisa:~<span class="err">$</span></code></pre></div>
+
+<p>We&#39;ll need this file later.If you look at the staticDis file , you can see whole dump in intel syntax.</p>
+
+<p>This time , we&#39;ll try something different.I&#39;ll execute the process first and later I&#39;ll attach the debugger to the process.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">eren@lisa:~<span class="nv">$ </span>./CrackTheNuke 
+
+        *** NUKE CONTROL SYSTEM  ***
+
+
+
+PASSWORD:</code></pre></div>
+
+<p>Therefore in this case , I&#39;ll switch to another shell for debugging.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">eren@lisa:~<span class="nv">$ </span>ps aux <span class="p">|</span> grep Crack
+eren      <span class="m">4741</span>  0.0  0.0   <span class="m">1724</span>   <span class="m">252</span> pts/0    S+   14:54   0:00 ./CrackTheNuke
+eren      <span class="m">4845</span>  0.0  0.1   <span class="m">7832</span>   <span class="m">832</span> pts/1    S+   14:56   0:00 grep Crack
+eren@lisa:~<span class="nv">$ </span>gdb --pid 4741
+GNU gdb <span class="o">(</span>GDB<span class="o">)</span> 7.4.1-debian
+Copyright <span class="o">(</span>C<span class="o">)</span> <span class="m">2012</span> Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version <span class="m">3</span> or later &lt;http://gnu.org/licenses/gpl.html&gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type <span class="s2">&quot;show copying&quot;</span>
+and <span class="s2">&quot;show warranty&quot;</span> <span class="k">for</span> details.
+This GDB was configured as <span class="s2">&quot;x86_64-linux-gnu&quot;</span>.
+For bug reporting instructions, please see:
+&lt;http://www.gnu.org/software/gdb/bugs/&gt;.
+Catchpoint <span class="m">1</span> <span class="o">(</span>syscall <span class="s1">&#39;ptrace&#39;</span> <span class="o">[</span>26<span class="o">])</span>
+Attaching to process 4741
+Reading symbols from /home/eren/CrackTheNuke...<span class="o">(</span>no debugging symbols found<span class="o">)</span>...done.
+Reading symbols from /lib32/libc.so.6...<span class="o">(</span>no debugging symbols found<span class="o">)</span>...done.
+Loaded symbols <span class="k">for</span> /lib32/libc.so.6
+Reading symbols from /lib/ld-linux.so.2...<span class="o">(</span>no debugging symbols found<span class="o">)</span>...done.
+Loaded symbols <span class="k">for</span> /lib/ld-linux.so.2
+0xf7726430 in __kernel_vsyscall <span class="o">()</span>
+<span class="o">=</span>&gt; 0xf7726430 &lt;__kernel_vsyscall+16&gt;:   5d  pop    ebp
+<span class="o">(</span>gdb<span class="o">)</span></code></pre></div>
+
+<p>Now type random 16 characters as input  to the previous shell , and comeback here.You are in the scanf function which comes from glibc.
+(The crackme will call scanf 16 times.We save time here)</p>
+
+<p>In gdb , You can type &quot;si&quot; which is an abbreviation for &quot;single step&quot;.Type &quot;si&quot; once until you are here 0x80495ed</p>
+
+<p>Or you can type &quot;b * 0x80495ed&quot; and &quot;c&quot; to stop in that address.</p>
+
+<p>Anyway , we are now here</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">0x80495ed &lt;main+195&gt;:</code></pre></div>
+
+<p>Ok here , we have a comparison </p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">0x80495ed &lt;main+195&gt;:    cmp    DWORD PTR <span class="o">[</span>esp+0x1c<span class="o">]</span>,0x0</code></pre></div>
+
+<p>In gdb , You can type </p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">p/x <span class="nv">$esp</span></code></pre></div>
+
+<p>to examine what&#39;s inside of $esp </p>
+
+<p>You can also do some calculations based on registers and addresses</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">p/x <span class="nv">$esp</span>+0x1c</code></pre></div>
+
+<p>or show the contents of the address by dereferencing</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">p/x *0xff811bac</code></pre></div>
+
+<p>You can type &quot;si&quot; here , the crackme has consumed  the 16 chars that you have typed just before  and now It is looking for &quot;\n&quot; char to understand if we press the enter key or not.</p>
+
+<p>put another break point to 0x804962d &quot;b * 0x804962d&quot; if you don&#39;t want to wait.</p>
+
+<p>Now this part is interesting.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">=</span>&gt; 0x804962d &lt;main+259&gt;:   push   eax
+   0x804962e &lt;main+260&gt;:  push   ebx
+   0x804962f &lt;main+261&gt;:  rdtsc  
+   0x8049631 &lt;main+263&gt;:  and    eax,0xfffff
+   0x8049636 &lt;main+268&gt;:  <span class="nb">test   </span>eax,eax
+   0x8049638 &lt;main+270&gt;:  je     0x8049646 &lt;g99&gt;
+   0x804963a &lt;main+272&gt;:  xor    ebx,0xe
+   0x804963d &lt;main+275&gt;:  add    ebx,0xe
+   0x8049640 &lt;main+278&gt;:  sub    ebx,0xe
+   0x8049643 &lt;main+281&gt;:  dec    eax</code></pre></div>
+
+<p>Have you heard about <a href="http://en.wikipedia.org/wiki/Time_Stamp_Counter">rdtsc</a> instruction ? </p>
+
+<p>It keeps cpu cycles.After calling rdtsc instruction ,The stamp counter will be stored in edx and eax.
+After rdtsc , we keep rightmost 20bits of the eax into eax.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">0x8049636 &lt;main+268&gt;:        <span class="nb">test   </span>eax,eax
+   0x8049638 &lt;main+270&gt;:        je     0x8049646 &lt;g99&gt;</code></pre></div>
+
+<p>Above asm lines were written in C , codes  would be like below.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="k">if</span><span class="o">(</span><span class="nv">eax</span> <span class="o">==</span> 0<span class="o">)</span>
+<span class="o">{</span>
+    goto 0x8049646
+<span class="o">}</span></code></pre></div>
+
+<p>Since eax is not 0 , we will continue to investigate more.
+As you may see , below codes are kindda trash :).We add 0xe to ebx and later subtract it.Those are put there to get us away from the code :) It&#39;s typical psychological test :)</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">xor ebx,0xe
+add ebx,0xe
+sub ebx,0xe
+dec eax 
+<span class="k">until</span> eax is <span class="m">0</span> , <span class="k">continue</span> this loop :<span class="o">)</span></code></pre></div>
+
+<p>put a breakpoint &quot;b * 0x8049646&quot; there , and press &quot;c&quot;</p>
+
+<p>Ok not so much info here , put another step into or continue until </p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">=</span>&gt; 0x80494db &lt;nkc1qpE2L6f6AyqaendA&gt;:   push   ebp
+   0x80494dc &lt;nkc1qpE2L6f6AyqaendA+1&gt;:    mov    ebp,esp
+   0x80494de &lt;nkc1qpE2L6f6AyqaendA+3&gt;:    sub    esp,0x14
+   0x80494e1 &lt;nkc1qpE2L6f6AyqaendA+6&gt;:    mov    DWORD PTR <span class="o">[</span>ebp-0x4<span class="o">]</span>,0x0
+   0x80494e8 &lt;nkc1qpE2L6f6AyqaendA+13&gt;:   mov    DWORD PTR <span class="o">[</span>esp<span class="o">]</span>,0x0
+   0x80494ef &lt;nkc1qpE2L6f6AyqaendA+20&gt;:   call   0x804944b &lt;qEWL8Jl0zdpmTbwhziDv&gt;
+   0x80494f4 &lt;nkc1qpE2L6f6AyqaendA+25&gt;:   mov    eax,DWORD PTR <span class="o">[</span>ebp+0x8<span class="o">]</span>
+   0x80494f7 &lt;nkc1qpE2L6f6AyqaendA+28&gt;:   mov    DWORD PTR <span class="o">[</span>esp<span class="o">]</span>,eax
+   0x80494fa &lt;nkc1qpE2L6f6AyqaendA+31&gt;:   call   0x8048604 &lt;fjDKIzPtGuE8ZdfSL8vq&gt;
+   0x80494ff &lt;nkc1qpE2L6f6AyqaendA+36&gt;:   mov    DWORD PTR <span class="o">[</span>esp<span class="o">]</span>,0x2
+   0x8049506 &lt;nkc1qpE2L6f6AyqaendA+43&gt;:   call   0x804944b &lt;qEWL8Jl0zdpmTbwhziDv&gt;
+   0x804950b &lt;nkc1qpE2L6f6AyqaendA+48&gt;:   mov    eax,DWORD PTR <span class="o">[</span>ebp+0x8<span class="o">]</span>
+   0x804950e &lt;nkc1qpE2L6f6AyqaendA+51&gt;:   mov    DWORD PTR <span class="o">[</span>esp<span class="o">]</span>,eax
+   0x8049511 &lt;nkc1qpE2L6f6AyqaendA+54&gt;:   call   0x8048ab1 &lt;W0ElBw5Smo9TPiWOeK8c&gt;
+   0x8049516 &lt;nkc1qpE2L6f6AyqaendA+59&gt;:   mov    DWORD PTR <span class="o">[</span>ebp-0x4<span class="o">]</span>,eax
+   0x8049519 &lt;nkc1qpE2L6f6AyqaendA+62&gt;:   mov    DWORD PTR <span class="o">[</span>esp<span class="o">]</span>,0x1
+   0x8049520 &lt;nkc1qpE2L6f6AyqaendA+69&gt;:   call   0x804944b &lt;qEWL8Jl0zdpmTbwhziDv&gt;
+   0x8049525 &lt;nkc1qpE2L6f6AyqaendA+74&gt;:   mov    eax,DWORD PTR <span class="o">[</span>ebp-0x4<span class="o">]</span>
+   0x8049528 &lt;nkc1qpE2L6f6AyqaendA+77&gt;:   leave  
+   0x8049529 &lt;nkc1qpE2L6f6AyqaendA+78&gt;:   ret</code></pre></div>
+
+<p>nkc1qpE2L6f6AyqaendA this function is the main workflow for the whole process.</p>
+
+<p>Let&#39;s first investigate each function , we have 5 function call in nkc1qpE2L6f6AyqaendA.Those 3 functions are qEWL8Jl0zdpmTbwhziDv , fjDKIzPtGuE8ZdfSL8vq and W0ElBw5Smo9TPiWOeK8c.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">(</span>gdb<span class="o">)</span> x/10i qEWL8Jl0zdpmTbwhziDv
+   0x804944b &lt;qEWL8Jl0zdpmTbwhziDv&gt;:  push   ebp
+   0x804944c &lt;qEWL8Jl0zdpmTbwhziDv+1&gt;:    mov    ebp,esp
+   0x804944e &lt;qEWL8Jl0zdpmTbwhziDv+3&gt;:    mov    eax,DWORD PTR <span class="o">[</span>ebp+0x8<span class="o">]</span>
+   0x8049451 &lt;qEWL8Jl0zdpmTbwhziDv+6&gt;:    cmp    eax,0x0
+   0x8049454 &lt;qEWL8Jl0zdpmTbwhziDv+9&gt;:    je     0x80494b9 &lt;hzdhp&gt;
+   0x8049456 &lt;qEWL8Jl0zdpmTbwhziDv+11&gt;:   cmp    eax,0x1
+   0x8049459 &lt;qEWL8Jl0zdpmTbwhziDv+14&gt;:   je     0x8049499 &lt;qEWL8Jl0zdpmTbwhziDv+78&gt;
+   0x804945b &lt;qEWL8Jl0zdpmTbwhziDv+16&gt;:   call   0x8047b71
+   0x8049460 &lt;qEWL8Jl0zdpmTbwhziDv+21&gt;:   add    DWORD PTR <span class="o">[</span>eax+0x48604bf<span class="o">]</span>,0x5eb9008
+   0x804946a &lt;qEWL8Jl0zdpmTbwhziDv+31&gt;:   add    DWORD PTR <span class="o">[</span>eax-0x4608ea13<span class="o">]</span>,0x8048ab1</code></pre></div>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">(</span>gdb<span class="o">)</span> x/10i fjDKIzPtGuE8ZdfSL8vq
+   0x8048604 &lt;fjDKIzPtGuE8ZdfSL8vq&gt;:  call   0xb027:0xaf72c78c
+   0x804860b &lt;fjDKIzPtGuE8ZdfSL8vq+7&gt;:    cmp    esi,DWORD PTR ds:0xe4dfbbf1
+   0x8048611 &lt;fjDKIzPtGuE8ZdfSL8vq+13&gt;:   <span class="o">(</span>bad<span class="o">)</span>  
+   0x8048612 &lt;fjDKIzPtGuE8ZdfSL8vq+14&gt;:   and    al,BYTE PTR <span class="o">[</span>ebp+edi*2-0x8<span class="o">]</span>
+   0x8048616 &lt;fjDKIzPtGuE8ZdfSL8vq+18&gt;:   push   ebx
+   0x8048617 &lt;fjDKIzPtGuE8ZdfSL8vq+19&gt;:   push   esi
+   0x8048618 &lt;fjDKIzPtGuE8ZdfSL8vq+20&gt;:   inc    edx
+   0x8048619 &lt;fjDKIzPtGuE8ZdfSL8vq+21&gt;:   mov    WORD PTR <span class="o">[</span>ebp+0x76<span class="o">]</span>,ss
+   0x804861c &lt;fjDKIzPtGuE8ZdfSL8vq+24&gt;:   xchg   edx,eax
+   0x804861d &lt;fjDKIzPtGuE8ZdfSL8vq+25&gt;:   mov    al,ds:0x45fd3fbb
+<span class="o">(</span>gd</code></pre></div>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">(</span>gdb<span class="o">)</span> x/10i W0ElBw5Smo9TPiWOeK8c
+   0x8048ab1 &lt;W0ElBw5Smo9TPiWOeK8c&gt;:  call   0xb023:0x1c72c78c
+   0x8048ab8 &lt;W0ElBw5Smo9TPiWOeK8c+7&gt;:    cmp    esi,DWORD PTR ds:0xe4dfbbf1
+   0x8048abe &lt;W0ElBw5Smo9TPiWOeK8c+13&gt;:   jmp    0xf86e358
+   0x8048ac3 &lt;W0ElBw5Smo9TPiWOeK8c+18&gt;:   xchg   ax,ax
+   0x8048ac5 &lt;W0ElBw5Smo9TPiWOeK8c+20&gt;:   out    dx,eax
+   0x8048ac6 &lt;W0ElBw5Smo9TPiWOeK8c+21&gt;:   dec    ebp
+   0x8048ac7 &lt;W0ElBw5Smo9TPiWOeK8c+22&gt;:   xchg   edi,eax
+   0x8048ac8 &lt;W0ElBw5Smo9TPiWOeK8c+23&gt;:   popa   
+   0x8048ac9 &lt;W0ElBw5Smo9TPiWOeK8c+24&gt;:   <span class="nb">test   </span>DWORD PTR <span class="o">[</span>ecx-0x7e<span class="o">]</span>,esp
+   0x8048acc &lt;W0ElBw5Smo9TPiWOeK8c+27&gt;:   <span class="nb">test   </span>DWORD PTR <span class="o">[</span>edi<span class="o">]</span>,esi</code></pre></div>
+
+<p>So the workflow is in function nkc1qpE2L6f6AyqaendA ,</p>
+
+<p>we call qEWL8Jl0zdpmTbwhziDv -&gt; fjDKIzPtGuE8ZdfSL8vq -&gt; qEWL8Jl0zdpmTbwhziDv -&gt; W0ElBw5Smo9TPiWOeK8c -&gt; qEWL8Jl0zdpmTbwhziDv.</p>
+
+<p>As we examined the first 10 lines of each function.Have you felt something unusual ? </p>
+
+<p>Especially , If you look at the first lines of each function , you may figure out that first lines of fjDKIzPtGuE8ZdfSL8vq and W0ElBw5Smo9TPiWOeK8c are quite stupid :)</p>
+
+<p>I havent seen such a code &quot;call   0xb023:0x1c72c78c&quot; in my entire life :).It&#39;s because those 2 functions are totally encrypted and gdb tried to disassemble those encrypted bytes :)</p>
+
+<p>So qEWL8Jl0zdpmTbwhziDv actually decrypts the functions.Therefore , it is called before them.</p>
+
+<p>I am going to change whole workflow ,i will swap encrypted functions with plain ones and remove qEWL8Jl0zdpmTbwhziDv function from the workflow.</p>
+
+<p>Therefore , new workflow will be fjDKIzPtGuE8ZdfSL8vq -&gt; W0ElBw5Smo9TPiWOeK8c and that&#39;s it.</p>
+
+<h2> DeadEnd 1 Starts</h2>
+
+<p>But before doing all these stuff , i would like tell you my another dead-end.It&#39;s quite important for me.
+While i was working on this crackme , I looked for a way to disable TimeStampCounter or somehow controll it.Because crackme calls &quot;rdtsc&quot; instruction 2 times , substract from each other and calculate the time between instructions that have been executed.
+If you run the program under gdb , the time between instructions take much more time than it is executed by just itself.Therefore , I first searched a way to controll tsc counter.Tsc counter gets its value through CPU.It&#39;s out of my ability to change its state with OS.But i wrote a kernel module to update it to 0.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#include &lt;linux/module.h&gt;    // included for all kernel modules</span>
+<span class="c">#include &lt;linux/kernel.h&gt;    // included for KERN_INFO</span>
+<span class="c">#include &lt;linux/init.h&gt;      // included for __init and __exit macros</span>
+<span class="c">#include &lt;linux/kthread.h&gt;  // for threads</span>
+<span class="c">#include &lt;linux/sched.h&gt;  // for task_struct</span>
+<span class="c">#include &lt;linux/time.h&gt;   // for using jiffies </span>
+<span class="c">#include &lt;linux/timer.h&gt;</span>
+
+MODULE_LICENSE<span class="o">(</span><span class="s2">&quot;GPL&quot;</span><span class="o">)</span><span class="p">;</span>
+MODULE_AUTHOR<span class="o">(</span><span class="s2">&quot;m00dy&quot;</span><span class="o">)</span><span class="p">;</span>
+MODULE_DESCRIPTION<span class="o">(</span><span class="s2">&quot;A Fake rdtsc emulation&quot;</span><span class="o">)</span><span class="p">;</span>
+
+static struct task_struct *thread1<span class="p">;</span>
+
+int thread_fn<span class="o">(){</span>
+
+uint32_t hi,lo<span class="p">;</span>
+unsigned long j0,j1<span class="p">;</span>
+int <span class="nv">delay</span> <span class="o">=</span> HZ / 250<span class="p">;</span>
+<span class="nv">hi</span><span class="o">=</span>0<span class="p">;</span> <span class="nv">lo</span><span class="o">=</span>0xb<span class="p">;</span>
+printk<span class="o">(</span>KERN_INFO <span class="s2">&quot;In thread1&quot;</span><span class="o">)</span><span class="p">;</span>
+<span class="nv">j0</span> <span class="o">=</span> jiffies<span class="p">;</span>
+<span class="nv">j1</span> <span class="o">=</span> j0 + delay<span class="p">;</span>
+
+
+asm volatile<span class="o">(</span><span class="s2">&quot;wrmsr&quot;</span>::<span class="s2">&quot;c&quot;</span><span class="o">(</span>0x10<span class="o">)</span>,<span class="s2">&quot;a&quot;</span><span class="o">(</span>lo<span class="o">)</span>,<span class="s2">&quot;d&quot;</span><span class="o">(</span>hi<span class="o">))</span><span class="p">;</span>
+
+<span class="k">while</span><span class="o">(</span>1<span class="o">){</span>
+    <span class="k">if</span><span class="o">(</span>time_before<span class="o">(</span>jiffies,j1<span class="o">))</span>
+        schedule<span class="o">()</span><span class="p">;</span>
+    <span class="k">else</span>
+    <span class="o">{</span>
+      <span class="nv">j1</span> <span class="o">=</span> jiffies + delay<span class="p">;</span>
+      asm volatile<span class="o">(</span><span class="s2">&quot;wrmsr&quot;</span>::<span class="s2">&quot;c&quot;</span><span class="o">(</span>0x10<span class="o">)</span>,<span class="s2">&quot;a&quot;</span><span class="o">(</span>lo<span class="o">)</span>,<span class="s2">&quot;d&quot;</span><span class="o">(</span>hi<span class="o">))</span><span class="p">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="o">}</span>
+
+static int __init hello_init<span class="o">(</span>void<span class="o">)</span>
+<span class="o">{</span>
+
+    char  our_thread<span class="o">[</span>8<span class="o">]=</span><span class="s2">&quot;thread1&quot;</span><span class="p">;</span>
+    printk<span class="o">(</span>KERN_INFO <span class="s2">&quot;in init&quot;</span><span class="o">)</span><span class="p">;</span>
+    <span class="nv">thread1</span> <span class="o">=</span> kthread_create<span class="o">(</span>thread_fn,NULL,our_thread<span class="o">)</span><span class="p">;</span>
+    <span class="k">if</span><span class="o">((</span>thread1<span class="o">))</span>
+        <span class="o">{</span>
+        printk<span class="o">(</span>KERN_INFO <span class="s2">&quot;in if&quot;</span><span class="o">)</span><span class="p">;</span>
+        wake_up_process<span class="o">(</span>thread1<span class="o">)</span><span class="p">;</span>
+        <span class="o">}</span>
+
+    <span class="k">return</span> 0<span class="p">;</span>
+<span class="o">}</span>
+
+static void __exit hello_cleanup<span class="o">(</span>void<span class="o">)</span>
+<span class="o">{</span>
+    printk<span class="o">(</span>KERN_INFO <span class="s2">&quot;Fake RDTSC end \n&quot;</span><span class="o">)</span><span class="p">;</span>
+<span class="o">}</span>
+
+module_init<span class="o">(</span>hello_init<span class="o">)</span><span class="p">;</span>
+module_exit<span class="o">(</span>hello_cleanup<span class="o">)</span><span class="p">;</span></code></pre></div>
+
+<p>I lost the makefile but if you want to compile it , you can use helloworld makefile template for kernel module.You can easily find it on google.</p>
+
+<p>Anyway , that code didnt work as i expected.So i tried something else.</p>
+
+<h2>DeadEnd 1 Ends</h2>
+
+<p>My strategy will be to stop program where those 2 encrypted functions are in plain state.</p>
+
+<p>For example , 0x8048ab0  is in quite good position.Because it&#39;s end of the fjDKIzPtGuE8ZdfSL8vq.</p>
+
+<p>Now open .gdbinit file again.And put these things.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">set </span>disassembly-flavor intel
+<span class="nb">set </span>disassemble-next-line on
+handle SIGTRAP noprint pass nostop
+b * 0x8048ab0</code></pre></div>
+
+<p>Re open the crackme , attach the gdb again.Put 16chars and type &quot;c&quot;.
+The program should stop </p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">=</span>&gt; 0xf7706430 &lt;__kernel_vsyscall+16&gt;:  5d  pop    ebp
+<span class="o">(</span>gdb<span class="o">)</span> c
+Continuing.
+
+Program received signal SIGSEGV, Segmentation fault.
+0x08048ab1 in W0ElBw5Smo9TPiWOeK8c <span class="o">()</span>
+<span class="o">=</span>&gt; 0x08048ab1 &lt;W0ElBw5Smo9TPiWOeK8c+0&gt;: 9a 8c c7 <span class="m">72</span> 1c <span class="m">23</span> b0  call   0xb023:0x1c72c78c
+<span class="o">(</span>gdb<span class="o">)</span> x/10i fjDKIzPtGuE8ZdfSL8vq
+   0x8048604 &lt;fjDKIzPtGuE8ZdfSL8vq&gt;:  push   ebp
+   0x8048605 &lt;fjDKIzPtGuE8ZdfSL8vq+1&gt;:    mov    ebp,esp
+   0x8048607 &lt;fjDKIzPtGuE8ZdfSL8vq+3&gt;:    call   0x8047b08
+   0x804860c &lt;fjDKIzPtGuE8ZdfSL8vq+8&gt;:    xor    eax,0x20ec8390
+   0x8048611 &lt;fjDKIzPtGuE8ZdfSL8vq+13&gt;:   call   0x8047b08
+   0x8048616 &lt;fjDKIzPtGuE8ZdfSL8vq+18&gt;:   xor    eax,0x32ff45c6
+   0x804861b &lt;fjDKIzPtGuE8ZdfSL8vq+23&gt;:   call   0x8047b08
+   0x8048620 &lt;fjDKIzPtGuE8ZdfSL8vq+28&gt;:   xor    eax,0xdafe45c6
+   0x8048625 &lt;fjDKIzPtGuE8ZdfSL8vq+33&gt;:   call   0x8047b08
+   0x804862a &lt;fjDKIzPtGuE8ZdfSL8vq+38&gt;:   xor    eax,0xdbfd45c6
+<span class="o">(</span>gdb<span class="o">)</span></code></pre></div>
+
+<p>Ok we have at least plain form of the function fjDKIzPtGuE8ZdfSL8vq :) There&#39;s still a trick there.Gdb still have problems.This technique called false assembly.Please read <a href="http://www.stonedcoder.org/%7Ekd/lib/14-61-1-PB.pdf">this</a> for more info.</p>
+
+<p>Now we need to dump the plain function to a file.Paramethers are filename startAddr and endAddr.</p>
+
+<p>in this case , i typed </p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">dump ihex memory fjDKIzPtGuE8ZdfSL8vq_dump 0x8048604 0x8048ab0</code></pre></div>
+
+<p>We dumped the entire function into fjDKIzPtGuE8ZdfSL8vq_dump file as plain.</p>
+
+<p>Now , we need to do this for another encrypted function.</p>
+
+<p>put a breakpoint 0x08048e14  here , wait until program crashes and then type </p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">dump ihex memory W0ElBw5Smo9TPiWOeK8c_dump W0ElBw5Smo9TPiWOeK8c g999+3</code></pre></div>
+
+<h2>Let&#39;s get back to the surgery.</h2>
+
+<p>We now have plain forms of both encrypted functions.We can now change the workflow.</p>
+
+<p>Ok now , clean the .gdbinit file and put a breakpoint in 0x80494db</p>
+
+<p>(If you struggle here , please look at nkc1qpE2L6f6AyqaendA function.)</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">set </span>disassembly-flavor intel
+<span class="nb">set </span>disassemble-next-line on
+
+<span class="nb">break</span> * 0x80494ef
+commands
+<span class="nb">set</span><span class="o">(</span><span class="nv">$eip</span><span class="o">)</span> <span class="o">=</span> 0x80494f4
+<span class="k">continue</span>
+end
+
+<span class="nb">break</span> * 0x80494fa
+commands
+restore fjDKIzPtGuE8ZdfSL8vq_dump
+restore W0ElBw5Smo9TPiWOeK8c_dump
+<span class="k">continue</span>
+end
+
+<span class="nb">break</span> * 0x08049506
+commands
+<span class="nb">set</span><span class="o">(</span><span class="nv">$eip</span><span class="o">)</span> <span class="o">=</span> 0x804950b
+<span class="k">continue</span>
+end
+
+<span class="nb">break</span> * 0x8049520
+commands
+<span class="nb">set</span><span class="o">(</span><span class="nv">$eip</span><span class="o">)</span> <span class="o">=</span> 0x8049525
+<span class="k">continue</span>
+end</code></pre></div>
+
+<p>We changed the workflow , replaced the encrypted functions with plain ones.Now this part is easy.The main algorithm is same as part 1.</p>
+
+<p>Inputs are xored with other constants and we compare the outputs with other constants</p>
+
+<p>Inputs ^ FirstConstants == SecondConstants</p>
+
+<p>Therefore , Inputs = SecondConstants ^ FirstConstants</p>
+
+<p>Here is the our key generator.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/usr/bin/python</span>
+<span class="nv">firstConst</span> <span class="o">=</span> <span class="o">[</span>0x32,0xda,0xdb,0x1,0xf3,0x77,0x4c,0x57,0xbe,0x49,0xec,0x5f,0xab,0x7f,0xed,0x9f<span class="o">]</span>
+<span class="nv">secondConst</span> <span class="o">=</span> <span class="o">[</span>0x0d,0xef,0xf1,0x4d,0xb6,0x4c,0x69,0x20,0xf9,0x20,0xdd,0x7c,0xda,0x3b,0xc9,0xaf<span class="o">]</span>
+<span class="nv">ret</span> <span class="o">=</span><span class="s2">&quot;&quot;</span>
+<span class="k">for</span> x in range<span class="o">(</span>16<span class="o">)</span>:
+        ret+<span class="o">=</span>chr<span class="o">(</span>firstConst<span class="o">[</span>x<span class="o">]</span> ^ secondConst<span class="o">[</span>x<span class="o">])</span>
+print ret</code></pre></div>
+
+<h2>Here we go.</h2>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">eren@lisa:~<span class="nv">$ </span>./CrackTheNuke 
+
+        *** NUKE CONTROL SYSTEM  ***
+
+
+
+PASSWORD: ?5*LE<span class="p">;</span>%wGi1#qD<span class="nv">$0</span>
+
+        ***  ACCESS GRANTED  ***
+
+        *** THE NUKE STOPPED ***
+
+
+eren@lisa:~<span class="err">$</span></code></pre></div>
+
+<h2>I&#39;ll tell you what happened after i signed the contract</h2>
+
+<p>In my first day of the new job , They changed my department.(I still dont know why and the company still markets itself like best of bests in Turkey.)</p>
+
+<p>I became J2ee developer.I was using eclipse , committing svn , using a operating system called &quot;Windows *&quot;.They even asked me to write some css.</p>
+
+<p>Now , i live in Barcelona and have a great life.</p>
+
+<p>bb </p>
+
+<p>(If you want to have the crackme , shoot me an email.)</p>
+
+<p>(I can also give you the plain dumps of the encrypted functions in ihex format.)</p>
+
+<p>(Typos &amp; comments are always welcome.)</p>
+
+</article>
+
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'erenyagdiran'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+<footer>
+   <div id="date" class="meta">
+      20 Sep 2014
+   </div>
+   <div id="return">
+      <a href="/">&laquo; Return to the home page</a>
+   </div>
+</footer>
+
+      </main>
+   </body>
+</html>
