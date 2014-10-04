@@ -3,13 +3,286 @@
    <title>m00dy's place</title>
    <link href="/atom.xml" rel="self"/>
    <link href=""/>
-   <updated>2014-09-22T15:21:16+00:00</updated>
+   <updated>2014-10-04T19:05:41+00:00</updated>
    <id></id>
    <author>
       <name>John Doe</name>
       <email>john.doe@mail.sexy</email>
    </author>
 
+   
+   <entry>
+      <title>An Analysis of ShellShock Malware</title>
+      <link href="/An-Analysis-of-Shell-shock-malware"/>
+      <updated>2014-10-03T17:00:41+00:00</updated>
+      <id>/An-Analysis-of-Shell-shock-malware</id>
+      <content type="html">&lt;p&gt;TL;DR
+I had this malware from a gist which i dont really remember right now. I downloaded it and started to analyse what this is all about. As i analyzed so far, it&amp;#39;s somehow broken. May be i am late ?&lt;/p&gt;
+
+&lt;p&gt;Ok lets start with file command.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;eren@lisa:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;file nginx
+nginx: ELF 32-bit LSB executable, Intel 80386, version &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;SYSV&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, statically linked, &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; GNU/Linux 2.6.18, stripped
+eren@lisa:~&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;file program tells us that it&amp;#39;s statically linked and stripped. So, Most of its dependencies are inside the code and we will have difficulties while debugging it because the debug informations have been removed.&lt;/p&gt;
+
+&lt;p&gt;We&amp;#39;ll fire up gdb and start to debug the malware from its starting point.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;eren@lisa:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;gdb nginx 
+GNU gdb &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;GDB&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 7.4.1-debian
+Copyright &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;C&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2012&lt;/span&gt; Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt; or later &amp;lt;http://gnu.org/licenses/gpl.html&amp;gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type &lt;span class=&quot;s2&quot;&gt;&amp;quot;show copying&amp;quot;&lt;/span&gt;
+and &lt;span class=&quot;s2&quot;&gt;&amp;quot;show warranty&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; details.
+This GDB was configured as &lt;span class=&quot;s2&quot;&gt;&amp;quot;x86_64-linux-gnu&amp;quot;&lt;/span&gt;.
+For bug reporting instructions, please see:
+&amp;lt;http://www.gnu.org/software/gdb/bugs/&amp;gt;...
+Reading symbols from /home/eren/nginx...&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;no debugging symbols found&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;...done.
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; info file
+Symbols from &lt;span class=&quot;s2&quot;&gt;&amp;quot;/home/eren/nginx&amp;quot;&lt;/span&gt;.
+Local &lt;span class=&quot;nb&quot;&gt;exec &lt;/span&gt;file:
+    &lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;/home/eren/nginx&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;, file &lt;span class=&quot;nb&quot;&gt;type &lt;/span&gt;elf32-i386.
+    Entry point: 0x8048160&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;I&amp;#39;ll put a breakpoint to 0x8048160&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;b * 0x8048160&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;and then i&amp;#39;ll run the executable and it&amp;#39;ll will stop in its entry point.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; b * 0x8048160
+Breakpoint &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; at 0x8048160
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; r
+Starting program: /home/eren/nginx 
+
+Breakpoint 1, 0x08048160 in ?? &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;gt; 0x08048160:    &lt;span class=&quot;m&quot;&gt;31&lt;/span&gt; ed    xor    ebp,ebp
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; x/20i &lt;span class=&quot;nv&quot;&gt;$pc&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;gt; 0x8048160: xor    ebp,ebp
+   0x8048162:   pop    esi
+   0x8048163:   mov    ecx,esp
+   0x8048165:   and    esp,0xfffffff0
+   0x8048168:   push   eax
+   0x8048169:   push   esp
+   0x804816a:   push   edx
+   0x804816b:   push   0x804be00
+   0x8048170:   push   0x804be40
+   0x8048175:   push   ecx
+   0x8048176:   push   esi
+   0x8048177:   push   0x804b2cc
+   0x804817c:   call   0x804b7c0
+   0x8048181:   hlt&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;From 0x8048160 to 0x8048181, the code blocks are standart way of glibc execution. Therefore, the malware programmer didnt modified the entry point. If you compile an empty helloworld program, you would see the same starting code like above. 
+ Xoring ebp to ebp means nothing but this type of practices come from ABI (Application Binary Interface Specs). In the address of 0x804817c, the calls refers to &amp;lt;_&lt;em&gt;libc&lt;/em&gt;start_main@plt&amp;gt; function.&lt;/p&gt;
+
+&lt;p&gt;You can look at the details &lt;a href=&quot;http://refspecs.linuxbase.org/LSB_3.1.1/LSB-Core-generic/LSB-Core-generic/baselib---libc-start-main-.html&quot;&gt;here&lt;/a&gt;
+So, first paramether to libc&lt;em&gt;start&lt;/em&gt;main function is actually the last one pushed on the stack. Therefore, 0x804b2cc is our main function. Let&amp;#39;s put a breakpoint there and go on.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;b * 0x804b2cc&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;Breakpoint 2, 0x0804b2cc in ?? &lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;gt; 0x0804b2cc:    8d 4c &lt;span class=&quot;m&quot;&gt;24&lt;/span&gt; 04  lea    ecx,&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;esp+0x4&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; x/30i &lt;span class=&quot;nv&quot;&gt;$pc&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;gt; 0x804b2cc: lea    ecx,&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;esp+0x4&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x804b2d0:   and    esp,0xfffffff0
+   0x804b2d3:   push   DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ecx-0x4&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x804b2d6:   push   ebp
+   0x804b2d7:   mov    ebp,esp
+   0x804b2d9:   push   edi
+   0x804b2da:   push   esi
+   0x804b2db:   push   ebx
+   0x804b2dc:   push   ecx
+   0x804b2dd:   sub    esp,0x1464
+   0x804b2e3:   push   0x0
+   0x804b2e5:   call   0x8056ce0
+   0x804b2ea:   mov    ebx,eax
+   0x804b2ec:   call   0x8057430
+   0x804b2f1:   xor    eax,ebx
+   0x804b2f3:   mov    DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;esp&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,eax
+   0x804b2f6:   call   0x804cb90
+   0x804b2fb:   mov    DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;esp&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,0x0
+   0x804b302:   call   0x8056ce0
+   0x804b307:   mov    ebx,eax
+   0x804b309:   call   0x8057430
+   0x804b30e:   xor    eax,ebx
+   0x804b310:   mov    DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;esp&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,eax
+   0x804b313:   call   0x8048240
+   0x804b318:   call   0x8048fd5
+   0x804b31d:   movzx  eax,BYTE PTR ds:0x80cc2b5
+   0x804b324:   add    esp,0xc
+   0x804b327:   push   eax
+   0x804b328:   movzx  eax,BYTE PTR ds:0x80cc2b4
+   0x804b32f:   push   eax
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;As you may see, the main function has a lot of calls to other functions. I&amp;#39;ll not go into every call but cover most important aspects of its actions.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;0x8074fd0: mov    edx,ebx
+   0x8074fd2:   mov    ebx,DWORD PTR &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;esp+0x4&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x8074fd6:   mov    eax,0x7a
+   0x8074fdb:   call   DWORD PTR ds:0x80cbfd0&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;In the forth line, i see a call to somewhere over a pointer. I need to deference it.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; p/x *0x80cbfd0
+&lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0xf7ffd420
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; x/10i 0xf7ffd420
+   0xf7ffd420 &amp;lt;__kernel_vsyscall&amp;gt;:    push   ecx
+   0xf7ffd421 &amp;lt;__kernel_vsyscall+1&amp;gt;:  push   edx
+   0xf7ffd422 &amp;lt;__kernel_vsyscall+2&amp;gt;:  push   ebp
+   0xf7ffd423 &amp;lt;__kernel_vsyscall+3&amp;gt;:  mov    ebp,esp
+   0xf7ffd425 &amp;lt;__kernel_vsyscall+5&amp;gt;:  sysenter&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;After deferencing, It becomes our gate to the kernel. I wrote the address of 0x80cbfd0 somewhere to keep in my mind. We need to analyze the registers before it goes through syscall gate.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; info reg
+eax            0x7a 122
+ecx            0xffffffff   -1
+edx            0x0  0
+ebx            0xffffd5f6   -10762
+esp            0xffffd5e0   0xffffd5e0
+ebp            0xffffd7c8   0xffffd7c8
+esi            0x0  0
+edi            0x804be00    134528512
+eip            0x8074fdb    0x8074fdb
+eflags         0x286    &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; PF SF IF &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+cs             0x23 35
+ss             0x2b 43
+ds             0x2b 43
+es             0x2b 43
+fs             0x0  0
+gs             0x0  0&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;We need to look up syscall table for 0x7a (eax value). You can find syscall table &lt;a href=&quot;http://docs.cs.up.ac.za/programming/asm/derick_tut/syscalls.html&quot;&gt;here&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;122 belongs to uname syscall.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; x/20c &lt;span class=&quot;nv&quot;&gt;$ebx&lt;/span&gt;
+0xffffd5f6: &lt;span class=&quot;m&quot;&gt;76&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;L&amp;#39;&lt;/span&gt;   &lt;span class=&quot;m&quot;&gt;105&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;i&amp;#39;&lt;/span&gt;  &lt;span class=&quot;m&quot;&gt;110&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;n&amp;#39;&lt;/span&gt;  &lt;span class=&quot;m&quot;&gt;117&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;u&amp;#39;&lt;/span&gt;  &lt;span class=&quot;m&quot;&gt;120&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;x&amp;#39;&lt;/span&gt;  &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;\000&amp;#39;&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;\000&amp;#39;&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;\000&amp;#39;&lt;/span&gt;
+0xffffd5fe: &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;\000&amp;#39;&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;\000&amp;#39;&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;\000&amp;#39;&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;\000&amp;#39;&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;\000&amp;#39;&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;\000&amp;#39;&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;\000&amp;#39;&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;\000&amp;#39;&lt;/span&gt;
+0xffffd606: &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;\000&amp;#39;&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;\000&amp;#39;&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;\000&amp;#39;&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;\000&amp;#39;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;So the malware got the information about my system.At least it knows which operating system im running :)&lt;/p&gt;
+
+&lt;p&gt;It uses several times of brk syscall to allocate some space from the heap.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;0x8056ce6: push   ebx
+   0x8056ce7:   xor    ebx,ebx
+&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;gt; 0x8056ce9: mov    eax,0xd
+   0x8056cee:   call   DWORD PTR ds:0x80cbfd0&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Another syscall for getting time and later it will get also pid number.I&amp;#39;ll skip these until socket things come up.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;0x805864f: nop
+   0x8058650:   mov    edx,ebx
+   0x8058652:   mov    eax,0x66
+   0x8058657:   mov    ebx,0x1
+&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;gt; 0x805865c: lea    ecx,&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;esp+0x4&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+   0x8058660:   call   DWORD PTR ds:0x80cbfd0&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This is very important, the malware creates a socket with socket syscall.This time, eax is 102 and it is sys_socketcall in linux syscall table (i386).&lt;/p&gt;
+
+&lt;p&gt;When we look at the parameters, &lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; info reg
+eax            0x66 102
+ecx            0xffffb2b0   -19792
+edx            0x54302d33   1412443443
+ebx            0x1  1
+esp            0xffffb2ac   0xffffb2ac
+ebp            0xffffc338   0xffffc338
+esi            0x2e5fd200   778031616
+edi            0x804be00    134528512
+eip            0x8058660    0x8058660
+eflags         0x282    &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; SF IF &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+cs             0x23 35
+ss             0x2b 43
+ds             0x2b 43
+es             0x2b 43
+fs             0x0  0
+gs             0x63 99&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Ebx is really important, 0x1 tells us &lt;a href=&quot;http://lxr.free-electrons.com/source/include/uapi/linux/net.h#L26&quot;&gt;that&lt;/a&gt; it is a sys&lt;em&gt;socket and it will go down just &lt;a href=&quot;http://lxr.free-electrons.com/source/net/socket.c#L2509&quot;&gt;right&lt;/a&gt; there.
+Ecx is our pointer which is being passed into sys&lt;/em&gt;socket function.&lt;/p&gt;
+
+&lt;p&gt;And then, after syscall execution, the kernel should give us a file descriptor that we can write to or read from it.&lt;/p&gt;
+
+&lt;p&gt;I go to my proc file system to see which file descriptor are mapped to my process adress space.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;eren@lisa:/proc/30480/fd&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;ls -la
+total 0
+dr-x------ &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt; eren eren  &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; Oct  &lt;span class=&quot;m&quot;&gt;4&lt;/span&gt; 18:03 .
+dr-xr-xr-x &lt;span class=&quot;m&quot;&gt;8&lt;/span&gt; eren eren  &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; Oct  &lt;span class=&quot;m&quot;&gt;4&lt;/span&gt; 17:24 ..
+lrwx------ &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; eren eren &lt;span class=&quot;m&quot;&gt;64&lt;/span&gt; Oct  &lt;span class=&quot;m&quot;&gt;4&lt;/span&gt; 18:04 &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; -&amp;gt; /dev/pts/0
+lrwx------ &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; eren eren &lt;span class=&quot;m&quot;&gt;64&lt;/span&gt; Oct  &lt;span class=&quot;m&quot;&gt;4&lt;/span&gt; 18:04 &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; -&amp;gt; /dev/pts/0
+lrwx------ &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; eren eren &lt;span class=&quot;m&quot;&gt;64&lt;/span&gt; Oct  &lt;span class=&quot;m&quot;&gt;4&lt;/span&gt; 18:03 &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt; -&amp;gt; /dev/pts/0
+lrwx------ &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; eren eren &lt;span class=&quot;m&quot;&gt;64&lt;/span&gt; Oct  &lt;span class=&quot;m&quot;&gt;4&lt;/span&gt; 18:04 &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt; -&amp;gt; socket:&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;324793&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+lrwx------ &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; eren eren &lt;span class=&quot;m&quot;&gt;64&lt;/span&gt; Oct  &lt;span class=&quot;m&quot;&gt;4&lt;/span&gt; 18:04 &lt;span class=&quot;m&quot;&gt;4&lt;/span&gt; -&amp;gt; socket:&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;324794&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+lr-x------ &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; eren eren &lt;span class=&quot;m&quot;&gt;64&lt;/span&gt; Oct  &lt;span class=&quot;m&quot;&gt;4&lt;/span&gt; 18:04 &lt;span class=&quot;m&quot;&gt;5&lt;/span&gt; -&amp;gt; pipe:&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;324795&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+l-wx------ &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; eren eren &lt;span class=&quot;m&quot;&gt;64&lt;/span&gt; Oct  &lt;span class=&quot;m&quot;&gt;4&lt;/span&gt; 18:04 &lt;span class=&quot;m&quot;&gt;6&lt;/span&gt; -&amp;gt; pipe:&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;324795&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+lrwx------ &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; eren eren &lt;span class=&quot;m&quot;&gt;64&lt;/span&gt; Oct  &lt;span class=&quot;m&quot;&gt;4&lt;/span&gt; 18:04 &lt;span class=&quot;m&quot;&gt;7&lt;/span&gt; -&amp;gt; socket:&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;327132&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Yeah there it is.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;0x805844c: mov    eax,0x66
+   0x8058451:   mov    ebx,0x3
+   0x8058456:   lea    ecx,&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;esp+0x4&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;gt; 0x805845a: call   DWORD PTR ds:0x80cbfd0&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This time, Ebx is 0x3 that means SYS&lt;em&gt;CONNECT. Ecx now points to paramethers that we pushed into sys&lt;/em&gt;connect. Let&amp;#39;s examine the parameter.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;m&quot;&gt;2515&lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; SYS_CONNECT:
+&lt;span class=&quot;m&quot;&gt;2516&lt;/span&gt;                 &lt;span class=&quot;nv&quot;&gt;err&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; sys_connect&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;a0, &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;struct sockaddr __user *&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;a1, a&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;2&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;m&quot;&gt;2517&lt;/span&gt;                 &lt;span class=&quot;nb&quot;&gt;break&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The code above is from kernel source.Paramethers are a0,a pointer and another a2. These are all 12 bytes. So ecx should point to 12 bytes.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; x/3wx &lt;span class=&quot;nv&quot;&gt;$ecx&lt;/span&gt;
+0xffffb2b0: 0x00000007  0xffffc30c  0x00000010
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, a0 =&amp;gt; 0x07, sockaddr pointer is =&amp;gt; 0xffffc30c and last paramether is 0x00000010.&lt;/p&gt;
+
+&lt;p&gt;We want to find where this malware connects. We know that sockaddr structure holds this information. Sockaddr structure is &lt;a href=&quot;http://www.softwarerevolution.com/jeneral/ipc/include/linux/socket.h/source/SOURCE-socket.h.html&quot;&gt;here&lt;/a&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;typedef unsigned short sa_family_t&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+struct sockaddr &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    sa_family_t sa_family&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; /* address family, AF_xxx */
+    char sa_data&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;14&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; /* &lt;span class=&quot;m&quot;&gt;14&lt;/span&gt; bytes of protocol address   */
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;We can do our estimation that 1 short + 14 char =&amp;gt; 16 bytes.
+So i&amp;#39;ll skip the first 2 bytes and print the others.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; x/14bu 0xffffc30e
+0xffffc30e: 0   80  108 162 197 26  0   0
+0xffffc316: 0   0   0   0   0   0&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;So, it&amp;#39;s clear that the malware wants to connect to 108.162.197.26 through 80 port.&lt;/p&gt;
+
+&lt;p&gt;Malware then tries to get the ip of host machine by executing getsockname.&lt;/p&gt;
+
+&lt;p&gt;It then reads &amp;quot;/proc/net/route&amp;quot; here to parse network interface and uses ioctl syscall to get its MAC address (SIOCGIFHWADDR).&lt;/p&gt;
+
+&lt;p&gt;Later, It forks itself and quit.&lt;/p&gt;
+
+&lt;p&gt;The forked process also tries to connect somewhere(89.238.150.154) but it cannot. I don&amp;#39;t know why.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;root@lisa:~/blog# tcpdump -v -X dst 89.238.150.154
+tcpdump: listening on eth0, link-type EN10MB &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Ethernet&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, capture size &lt;span class=&quot;m&quot;&gt;65535&lt;/span&gt; bytes
+18:52:50.373950 IP &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;tos 0x0, ttl 64, id 46732, offset 0, flags &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;DF&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;, proto TCP &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;6&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, length 60&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    95.85.48.36.51746 &amp;gt; 89.238.150.154.5: Flags &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;S&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;, cksum 0x8030 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;incorrect -&amp;gt; 0x9be6&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, seq 3399773995, win 14600, options &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;mss 1460,sackOK,TS val &lt;span class=&quot;m&quot;&gt;113698896&lt;/span&gt; ecr 0,nop,wscale 8&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;, length 0
+    0x0000:  &lt;span class=&quot;m&quot;&gt;4500&lt;/span&gt; 003c b68c &lt;span class=&quot;m&quot;&gt;4000&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;4006&lt;/span&gt; 042e 5f55 &lt;span class=&quot;m&quot;&gt;3024&lt;/span&gt;  E..&amp;lt;..@.@..._U0&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt;
+    0x0010:  59ee 969a ca22 &lt;span class=&quot;m&quot;&gt;0005&lt;/span&gt; caa4 6f2b &lt;span class=&quot;m&quot;&gt;0000&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0000&lt;/span&gt;  Y....&lt;span class=&quot;err&quot;&gt;&amp;quot;&lt;/span&gt;....o+....
+    0x0020:  a002 &lt;span class=&quot;m&quot;&gt;3908&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;8030&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0000&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0204&lt;/span&gt; 05b4 &lt;span class=&quot;m&quot;&gt;0402&lt;/span&gt; 080a  ..9..0..........
+    0x0030:  06c6 e850 &lt;span class=&quot;m&quot;&gt;0000&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0000&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0103&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0308&lt;/span&gt;            ...P........&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Anyway, this malware looks harmless now :)&lt;/p&gt;
+</content>
+   </entry>
    
    <entry>
       <title>[Part2] I was asked to crack a program in a job interview !</title>
